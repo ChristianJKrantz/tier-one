@@ -1,14 +1,18 @@
 # Tier One
 
-**A chapter-by-chapter Windows 11 study site for future Tier 1 techs and beyond. Hints point the way, but you find every answer yourself.**
+**Windows 11 help desk training, chapter by chapter. Start at Tier 1 and work your way up. Hints point the way, but you find every answer yourself.**
 
-Tier One turns all 19 chapters and 3 appendixes of *Windows 11 Inside Out* into a training course built like a Windows 11 desktop. Each chapter has short lessons, spaced-repetition flashcards, Run-box command drills, help desk tickets and a belt test. Pass a chapter's belt test to earn its belt, and collect belts to rank up from White to Black.
+Tier One turns all 19 chapters and 3 appendixes of *Windows 11 Inside Out* into a training course built like a Windows 11 desktop. You start as a **Trainee** at the help desk. Each chapter is a ticket queue with short lessons, spaced-repetition flashcards, Run-box command drills, help desk tickets and a certification exam. Pass a chapter's exam to get certified in it, and every certification moves you up the support career ladder:
+
+**Trainee → Tier 1 Tech → Tier 1 Lead → Tier 2 Tech → Tier 2 Lead → Tier 3 Engineer → Systems Admin → Senior Sysadmin → IT Lead**
+
+Your current rank shows on a technician ID badge on the home screen.
 
 ### ▶ [Train here](https://christianjkrantz.github.io/tier-one/)
 
 Works in any modern browser on desktop, tablet or phone. No install, no account, no tracking. It also works offline once it's loaded.
 
-![Home screen: rank card, today's review queue, and chapter tiles with progress rings](docs/desktop.png)
+![Home screen: technician ID badge, today's review queue, and chapter tiles with progress rings](docs/desktop.png)
 
 ---
 
@@ -35,16 +39,16 @@ Every study mode follows one rule: **the site never shows you the right answer.*
 | **Flashcards** | Say your answer, flip the card, then rate yourself. **Forgot** brings the card back this session, **Shaky** brings it back tomorrow, and **Knew it** moves it up a box (1, 3, 7, 14, 30 and then 60 days). |
 | **Run drills** | A Run dialog asks for the tool or command, such as `devmgmt.msc`, `ipconfig /flushdns` or `Get-Service`. A wrong entry gets "Windows can't find…". Two hints narrow it down without spelling it out, and **Skip** moves the drill to the back of the line. |
 | **Help desk practice** | Ticket-style scenarios. A wrong pick is crossed out with the reason it misses and a link to the section to reread. The right option is only marked once *you* pick it. |
-| **Belt test** | Every question plus up to three typed commands, with no hints. Score 80% to earn the belt. The results list your misses, each with a hint and the section to reread, but not the answer. |
+| **Certification exam** | Every question plus up to three typed commands, with no hints. Score 80% to get certified and move toward your next promotion. The results list your misses, each with a hint and the section to reread, but not the answer. |
 
 <img src="docs/ticket.png" alt="A help desk ticket with one wrong pick crossed out, the reason it misses, a reread link and a hint" width="720">
 
 <img src="docs/run.png" alt="Run drill dialog after two hints: 'The switch is a three-letter word meaning everything'" width="720">
 
 ### Review, Run Rush and progress
-- **Review** collects due flashcards from every chapter, plus **Rematch**: every question you've missed comes back until you get it right on the first try.
+- **Review** collects due flashcards from every chapter, plus **Reopened tickets**: every question you've missed reopens until you solve it on the first try.
 - **Run Rush** gives you 60 seconds to type as many commands as you can from the whole course. Commands you skip become a list of chapters to drill, not a list of answers.
-- **Progress** shows your belt ladder, XP, day streak and a chapter-by-chapter table. You can export your progress to a file and import it on another device.
+- **Progress** shows your career ladder, XP, day streak and a chapter-by-chapter table. You can export your progress to a file and import it on another device.
 - **Start menu** (Ctrl+K) searches every lesson by topic, tool or command.
 
 <img src="docs/lesson.png" alt="Chapter 11 lesson: Think first prompt, lesson text and Lock it in summary, with the section list in the sidebar" width="720">

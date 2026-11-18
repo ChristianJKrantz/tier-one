@@ -55,7 +55,7 @@ with sync_playwright() as p:
     page.goto(URL)
     page.wait_for_selector('.tile')
     check(page.locator('.tile').count() == 22, 'home shows 22 chapter tiles')
-    check('White belt' in page.inner_text('.tray'), 'tray shows starting rank')
+    check('Trainee' in page.inner_text('.tray'), 'tray shows starting rank (Trainee)')
     shot(page, 'desktop.png')
 
     # Start menu search
@@ -132,8 +132,8 @@ with sync_playwright() as p:
     page.locator(f'.opt[data-o="{right}"]').click()
     check(page.locator('.opt.right').count() == 1, 'finding the right option marks it solved')
 
-    # Belt test: answer everything correctly
-    page.goto(URL + '#/c/c1/belt')
+    # Certification exam: answer everything correctly
+    page.goto(URL + '#/c/c1/exam')
     page.click('#beltgo')
     for _ in range(40):
         if page.locator('.result').count():
@@ -147,13 +147,13 @@ with sync_playwright() as p:
             a = page.evaluate("""t => { const c = W.byId('c1'); const r = c.run.find(r => t.includes(r[0].slice(0, 20))); return (Array.isArray(r[1]) ? r[1] : r[1].split('|'))[0]; }""", tt)
             page.fill('#runin', a); page.keyboard.press('Enter')
         page.wait_for_timeout(50)
-    check('100%' in page.inner_text('.result'), 'perfect belt test scores 100%')
-    check(page.evaluate("JSON.parse(localStorage.getItem('tierone.v1')).belts.c1") == 100, 'belt score saved')
+    check('100%' in page.inner_text('.result') and 'certified' in page.inner_text('.result'), 'perfect exam scores 100% and certifies')
+    check(page.evaluate("JSON.parse(localStorage.getItem('tierone.v1')).belts.c1") == 100, 'exam score saved')
     page.wait_for_timeout(700)
-    shot(page, 'belt.png')
+    shot(page, 'exam.png')
 
-    # Belt test fail: missed list shows hints, not answers
-    page.goto(URL + '#/c/c2/belt')
+    # Exam fail: missed list shows hints, not answers
+    page.goto(URL + '#/c/c2/exam')
     page.click('#beltgo')
     for _ in range(40):
         if page.locator('.result').count():
@@ -171,9 +171,9 @@ with sync_playwright() as p:
     check(not any(r in txt for r in rights if len(r) > 12), 'missed list never shows the right options')
 
     # Review, Rush, Progress
-    page.goto(URL + '#/review/rematch')
+    page.goto(URL + '#/review/reopened')
     page.wait_for_selector('.opt')
-    check(page.locator('.chip').count() >= 1, 'Rematch shows missed questions with chapter chips')
+    check(page.locator('.chip').count() >= 1, 'Reopened tickets show missed questions with chapter chips')
     page.goto(URL + '#/review/cards')
     page.wait_for_selector('#flash')
     check(True, 'Review cards render')
@@ -188,7 +188,9 @@ with sync_playwright() as p:
     shot(page, 'progress.png')
     page.goto(URL)
     page.wait_for_selector('.tile')
-    check(page.locator('.stamp').count() == 1, 'home tile shows the earned belt stamp')
+    check(page.locator('.stamp').count() == 1, 'home tile shows the certified stamp')
+    check(page.locator('.rankcard .idbadge').count() == 1 and 'Trainee' in page.inner_text('.rankcard'), 'home shows the technician ID badge')
+    check('belt' not in page.inner_text('body').lower(), 'no leftover belt wording on the home page')
 
     # Dark mode
     page.click('#themebtn')

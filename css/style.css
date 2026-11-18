@@ -120,7 +120,8 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .st-ic.sm { width: 30px; height: 30px; border-radius: 7px; flex: none; }
 .st-ic .ic { width: 22px; height: 22px; }
 .st-ic.sm .ic { width: 18px; height: 18px; }
-.st-belt { position: absolute; right: -4px; bottom: -3px; width: 16px; height: 7px; border-radius: 2px; background: #1b1b1b; border: 1.5px solid var(--card); }
+.st-cert { position: absolute; right: -5px; bottom: -4px; width: 17px; height: 17px; border-radius: 50%; background: var(--good); color: #fff; border: 2px solid var(--card); display: grid; place-items: center; }
+.st-cert .ic { width: 10px; height: 10px; stroke-width: 3; }
 .st-n { font-size: 11px; color: var(--muted); line-height: 1; margin-top: 4px; }
 .st-t { font-size: 12px; line-height: 1.25; }
 .st-res { list-style: none; margin: 0; padding: 0; }
@@ -160,19 +161,25 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .mode-head p { margin: 0; max-width: 72ch; }
 .fine { font-size: 12.5px; color: var(--muted); margin-top: 28px; max-width: 80ch; }
 
-/* ---------- belts ---------- */
-.beltchip { display: inline-block; width: 22px; height: 9px; border-radius: 2px; border: 1px solid rgba(0, 0, 0, .25); flex: none; }
-.belt-white { --belt: #f3f3f0; --belt2: #d9d9d4; } .belt-yellow { --belt: #f4c22b; --belt2: #d5a20d; } .belt-orange { --belt: #f0862a; --belt2: #cf6a10; }
-.belt-green { --belt: #2e9e57; --belt2: #1f7d42; } .belt-blue { --belt: #2a6fd6; --belt2: #1b56ad; } .belt-purple { --belt: #7d45cf; --belt2: #6131aa; }
-.belt-brown { --belt: #7b4a2b; --belt2: #5c351d; } .belt-red { --belt: #cf2e2e; --belt2: #a51d1d; } .belt-black { --belt: #23242a; --belt2: #0d0e12; }
-.beltchip { background: var(--belt); }
-.belt-art { position: relative; width: 150px; height: 92px; flex: none; }
-.belt-art::before { content: ""; position: absolute; left: 0; right: 0; top: 22px; height: 22px; border-radius: 5px; background: linear-gradient(var(--belt), var(--belt2)); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); }
-.belt-art::after, .belt-art span::after { content: ""; position: absolute; top: 38px; width: 20px; height: 50px; border-radius: 3px; background: linear-gradient(var(--belt), var(--belt2)); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); }
-.belt-art::after { left: 56px; transform: rotate(16deg); transform-origin: top; }
-.belt-art span::after { left: 74px; transform: rotate(-16deg); transform-origin: top; }
-.belt-art span::before { content: ""; position: absolute; left: 60px; top: 15px; width: 30px; height: 36px; border-radius: 6px; z-index: 1; background: linear-gradient(var(--belt), var(--belt2)); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .25), 0 2px 4px rgba(0, 0, 0, .2); }
-.belt-art.small { transform: scale(.7); transform-origin: left center; margin-right: -40px; }
+/* ---------- support tiers: rank colors, ID badge, certification seal ---------- */
+.rank-0 { --tier: #7d8494; } .rank-1 { --tier: #2e9e57; } .rank-2 { --tier: #0f8c8c; } .rank-3 { --tier: #2a6fd6; } .rank-4 { --tier: #4b4fd6; }
+.rank-5 { --tier: #7d45cf; } .rank-6 { --tier: #d0700f; } .rank-7 { --tier: #cf2e2e; } .rank-8 { --tier: #1d1e24; }
+.tierchip { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--tier); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2); flex: none; }
+.idbadge { position: relative; width: 150px; flex: none; padding: 14px 12px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--stroke2);
+  box-shadow: 0 6px 18px rgba(20, 30, 60, .16); display: flex; flex-direction: column; align-items: center; gap: 4px; overflow: hidden; margin-top: 10px; }
+.idbadge::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 46px; background: var(--tier); }
+.id-clip { position: absolute; top: -2px; left: 50%; width: 34px; height: 10px; margin-left: -17px; border-radius: 0 0 6px 6px; background: rgba(255, 255, 255, .55); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15); z-index: 1; }
+.id-top { position: relative; font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; margin-top: 2px; }
+.id-photo { position: relative; width: 56px; height: 56px; border-radius: 50%; background: var(--sunk); border: 3px solid var(--card); display: grid; place-items: center; color: var(--tier); margin-top: 2px; }
+.id-photo .ic { width: 30px; height: 30px; }
+.id-role { font-family: var(--display); font-weight: 700; font-size: 16px; line-height: 1.2; text-align: center; margin-top: 2px; }
+.id-tier { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.id-bar { width: 80%; height: 14px; margin-top: 6px; opacity: .55; background: repeating-linear-gradient(90deg, var(--text) 0 2px, transparent 2px 4px, var(--text) 4px 5px, transparent 5px 8px); }
+.seal { width: 92px; height: 92px; flex: none; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border: 3px dashed var(--stroke2); color: var(--muted); }
+.seal .ic { width: 34px; height: 34px; }
+.seal small { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.seal.on { border: 3px solid var(--good); background: var(--good-bg); color: var(--good); box-shadow: 0 0 0 5px var(--good-bg); }
 .stampin { animation: stamp .55s cubic-bezier(.2, 1.6, .5, 1); }
 @keyframes stamp { from { transform: scale(1.6) rotate(-10deg); opacity: 0; } }
 
@@ -183,6 +190,7 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .rankcard { background: var(--card); border: 1px solid var(--stroke); border-radius: var(--r-l); padding: 18px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-s); }
 .rankcard .muted { margin: 0; font-size: 13px; }
 .rank-name { font-family: var(--display); font-size: 22px; font-weight: 650; margin: 4px 0 0; }
+.rankcard > .muted { margin-top: 12px !important; }
 .statrow { display: flex; gap: 18px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--stroke); width: 100%; justify-content: center; }
 .statrow span { display: flex; flex-direction: column; line-height: 1.2; }
 .statrow b { font-size: 18px; }
@@ -207,7 +215,7 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .tile-txt { flex: 1; display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
 .tile-txt small { color: var(--muted); font-size: 12px; }
 .tile-txt b { font-weight: 600; font-size: 14px; }
-.stamp { position: absolute; top: -6px; right: 44px; background: #23242a; color: #fff; border-radius: 10px; padding: 1px 6px; display: grid; place-items: center; }
+.stamp { position: absolute; top: -7px; right: 44px; background: var(--good); color: #fff; border-radius: 10px; padding: 2px 6px; display: grid; place-items: center; }
 .stamp .ic { width: 14px; height: 14px; }
 .ring { width: 40px; height: 40px; flex: none; }
 .ring circle { fill: none; stroke-width: 4; }
@@ -370,6 +378,8 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .ranks { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .ranks li { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 14px; background: var(--sunk); font-size: 13px; opacity: .55; }
 .ranks li.got { opacity: 1; background: var(--accent-bg); }
+.ranks li.cur { box-shadow: inset 0 0 0 2px var(--accent); font-weight: 600; }
+.ladder-h { margin: 0 0 2px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .ranks small { color: var(--muted); }
 .statgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
 .statgrid .card { padding: 14px 18px; display: flex; flex-direction: column; }
@@ -425,6 +435,7 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
   .rankcard { flex-direction: column; text-align: center; }
   .rankcard .statrow { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--stroke); width: 100%; }
   .belt-intro, .result, .ladder { flex-direction: column; align-items: flex-start; }
+  .rankcard .idbadge { margin: 4px auto 0; }
   .flash { padding: 20px; }
   .flash .face p { font-size: 18px; }
   .run-form { flex-wrap: wrap; }

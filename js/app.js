@@ -1,5 +1,5 @@
 /* Tier One app: routing, progress, and the five study modes (Learn, Flashcards, Run drills,
-   Help desk practice, Belt test) plus Review, Run Rush and Progress.
+   Help desk practice, Certification exam) plus Review, Run Rush and Progress.
    Design rule: the app never shows the correct option or command. Wrong answers get a reason,
    a hint and a link back to the lesson; you keep going until you find it yourself. */
 'use strict';
@@ -43,11 +43,15 @@
   function streakNow() { return S.streak.day && today() - dayNum(S.streak.day) <= 1 ? S.streak.n : 0; }
   function addXP(n, msg) { S.xp += n; touchStreak(); save(); renderTray(); toast(`+${n} XP${msg ? ' · ' + msg : ''}`); }
 
-  /* ---------- belts and progress ---------- */
-  const RANKS = [['White', 0], ['Yellow', 2], ['Orange', 5], ['Green', 8], ['Blue', 11], ['Purple', 14], ['Brown', 17], ['Red', 20], ['Black', CH.length]];
-  const beltsEarned = () => CH.filter(c => (S.belts[c.id] || 0) >= 80).length;
-  function rank() { const n = beltsEarned(); let r = RANKS[0], next = RANKS[1]; RANKS.forEach((x, i) => { if (n >= x[1]) { r = x; next = RANKS[i + 1]; } }); return { name: r[0], n, next }; }
-  const beltChip = (name, cls = '') => `<span class="beltchip belt-${name.toLowerCase()} ${cls}" aria-hidden="true"></span>`;
+  /* ---------- certifications and the support career ladder ---------- */
+  // Passing a chapter's certification exam (80%+) certifies you in it; certifications move you up the ladder.
+  // (Scores are stored in S.belts for compatibility with progress saved by earlier versions.)
+  const RANKS = [['Trainee', 0], ['Tier 1 Tech', 2], ['Tier 1 Lead', 5], ['Tier 2 Tech', 8], ['Tier 2 Lead', 11], ['Tier 3 Engineer', 14], ['Systems Admin', 17], ['Senior Sysadmin', 20], ['IT Lead', CH.length]];
+  const certsEarned = () => CH.filter(c => (S.belts[c.id] || 0) >= 80).length;
+  function rank() { const n = certsEarned(); let r = RANKS[0], next = RANKS[1], idx = 0; RANKS.forEach((x, i) => { if (n >= x[1]) { r = x; next = RANKS[i + 1]; idx = i; } }); return { name: r[0], n, next, idx }; }
+  const tierChip = i => `<span class="tierchip rank-${i}" aria-hidden="true"></span>`;
+  const idBadge = (r, cls = '') => `<div class="idbadge rank-${r.idx} ${cls}" aria-hidden="true"><span class="id-clip"></span><span class="id-top">Tier One · IT Support</span><span class="id-photo">${icon('headset')}</span><span class="id-role">${esc(r.name)}</span><span class="id-tier">${r.idx === 0 ? 'In training' : `Level ${r.idx}`}</span><span class="id-bar"></span></div>`;
+  const seal = (on, cls = '') => `<div class="seal ${on ? 'on' : ''} ${cls}" aria-hidden="true">${icon(on ? 'cert' : 'lock')}<small>${on ? 'Certified' : 'Not yet'}</small></div>`;
 
   const INTERVALS = [0, 1, 3, 7, 14, 30, 60];
   const cardKey = (c, i) => `${c.id}:${i}`;
@@ -76,7 +80,7 @@
   const tray = $('#tray');
   function renderTray() {
     const r = rank(), st = streakNow();
-    tray.innerHTML = `${beltChip(r.name)}<span class="tray-txt"><b>${r.name} belt</b><small>${S.xp.toLocaleString()} XP</small></span><span class="tray-streak" title="Day streak">${icon('flame')}${st}</span>`;
+    tray.innerHTML = `${tierChip(r.idx)}<span class="tray-txt"><b>${esc(r.name)}</b><small>${S.xp.toLocaleString()} XP</small></span><span class="tray-streak" title="Day streak">${icon('flame')}${st}</span>`;
     const due = allDue(), b = $('#duebadge');
     b.hidden = !due; b.textContent = due > 99 ? '99+' : due;
   }
@@ -96,7 +100,7 @@
   [['home', 'home'], ['review', 'review'], ['rush', 'rush'], ['progress', 'progress']].forEach(([k, ic]) => { const a = $(`[data-nav="${k}"]`); a.insertAdjacentHTML('afterbegin', icon(ic)); a.title = a.getAttribute('aria-label'); });
   $('#startbtn').title = 'Start: all chapters (Ctrl+K)';
 
-  function setTitle(text, ic) { $('#wintitle').textContent = text; $('#tbicon').innerHTML = icon(ic || 'logo'); document.title = text === 'Tier One' ? 'Tier One: learn Windows 11 inside and out' : `${text} · Tier One`; }
+  function setTitle(text, ic) { $('#wintitle').textContent = text; $('#tbicon').innerHTML = icon(ic || 'logo'); document.title = text === 'Tier One' ? 'Tier One: Windows 11 help desk training' : `${text} · Tier One`; }
 
   /* ---------- Start menu ---------- */
   const start = $('#start'), startBtn = $('#startbtn');
@@ -104,7 +108,7 @@
     q = (q || '').trim().toLowerCase();
     let body;
     if (!q) {
-      body = `<h2 class="st-h">All chapters</h2><div class="st-grid">${CH.map(c => `<a class="st-app" href="#/c/${c.id}"><span class="st-ic part${c.part}">${icon(c.icon)}${(S.belts[c.id] || 0) >= 80 ? '<span class="st-belt" title="Belt earned"></span>' : ''}</span><span class="st-n">${esc(c.num)}</span><span class="st-t">${esc(c.short)}</span></a>`).join('')}</div>`;
+      body = `<h2 class="st-h">All chapters</h2><div class="st-grid">${CH.map(c => `<a class="st-app" href="#/c/${c.id}"><span class="st-ic part${c.part}">${icon(c.icon)}${(S.belts[c.id] || 0) >= 80 ? `<span class="st-cert" title="Certified">${icon('check')}</span>` : ''}</span><span class="st-n">${esc(c.num)}</span><span class="st-t">${esc(c.short)}</span></a>`).join('')}</div>`;
     } else {
       const hits = [];
       CH.forEach(c => {
@@ -116,7 +120,7 @@
     return body;
   }
   function openStart() {
-    start.innerHTML = `<div class="st-search">${icon('search')}<input id="stq" type="search" placeholder="Search topics, tools and commands" aria-label="Search topics" autocomplete="off"></div><div id="stbody">${startHTML('')}</div><div class="st-foot">${beltChip(rank().name)}<span>${esc(rank().name)} belt · ${beltsEarned()} of ${CH.length} chapter belts</span></div>`;
+    start.innerHTML = `<div class="st-search">${icon('search')}<input id="stq" type="search" placeholder="Search topics, tools and commands" aria-label="Search topics" autocomplete="off"></div><div id="stbody">${startHTML('')}</div><div class="st-foot">${tierChip(rank().idx)}<span>${esc(rank().name)} · ${certsEarned()} of ${CH.length} certifications</span></div>`;
     start.hidden = false; startBtn.setAttribute('aria-expanded', 'true'); startBtn.classList.add('on');
     const q = $('#stq'); q.focus();
     q.addEventListener('input', () => { $('#stbody').innerHTML = startHTML(q.value); });
@@ -157,7 +161,7 @@
       if (s.belt < 80) {
         if (s.practice < 1) return { c, mode: 'practice', label: 'Help desk practice' };
         if (s.drills !== null && s.drills < 1) return { c, mode: 'run', label: 'Run drills' };
-        return { c, mode: 'belt', label: 'Belt test' };
+        return { c, mode: 'exam', label: 'Certification exam' };
       }
     }
     return null;
@@ -165,25 +169,24 @@
   function homeView() {
     setTitle('Tier One', 'logo');
     const r = rank(), due = allDue(), missed = Object.keys(S.missed).length, nx = nextStep();
-    const partsHTML = [1, 2, 3, 4].map(p => `<section class="part"><h2 class="part-h">${esc(W.parts[p])}</h2><div class="tiles">${CH.filter(c => c.part === p).map(c => { const s = stats(c); return `<a class="tile" href="#/c/${c.id}"><span class="tile-ic part${p}">${icon(c.icon)}</span><span class="tile-txt"><small>${/[A-C]/.test(c.num) ? 'Appendix' : 'Chapter'} ${esc(c.num)}</small><b>${esc(c.short)}</b></span>${s.belt >= 80 ? `<span class="stamp" title="Belt earned (${s.belt}%)">${icon('belt')}</span>` : ''}${ring(s.pct, `${c.short}: ${s.pct}% complete`)}</a>`; }).join('')}</div></section>`).join('');
+    const partsHTML = [1, 2, 3, 4].map(p => `<section class="part"><h2 class="part-h">${esc(W.parts[p])}</h2><div class="tiles">${CH.filter(c => c.part === p).map(c => { const s = stats(c); return `<a class="tile" href="#/c/${c.id}"><span class="tile-ic part${p}">${icon(c.icon)}</span><span class="tile-txt"><small>${/[A-C]/.test(c.num) ? 'Appendix' : 'Chapter'} ${esc(c.num)}</small><b>${esc(c.short)}</b></span>${s.belt >= 80 ? `<span class="stamp" title="Certified (${s.belt}%)">${icon('cert')}</span>` : ''}${ring(s.pct, `${c.short}: ${s.pct}% complete`)}</a>`; }).join('')}</div></section>`).join('');
     app.innerHTML = `<div class="pad home">
       <section class="hero">
         <div class="hero-txt">
           <p class="eyebrow">Windows 11, chapter by chapter</p>
-          <h2 class="hero-h">Train like a technician. Earn your black belt.</h2>
-          <p class="lead">Every chapter has a lesson, flashcards, Run-box command drills, help desk tickets and a belt test. Hints point you to the answer. They never just hand it over.</p>
-          <div class="hero-act">${nx ? `<a class="btn primary" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}Continue: ${esc(nx.c.num)} · ${esc(nx.label)}</a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Every belt earned! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button></div>
+          <h2 class="hero-h">Start at the help desk. Work your way up.</h2>
+          <p class="lead">Every chapter is a ticket queue: learn it, drill the commands, work the tickets, then pass the certification exam. Each certification moves you up the support ladder from Trainee to IT Lead. Hints point you to the answer. They never just hand it over.</p>
+          <div class="hero-act">${nx ? `<a class="btn primary" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}Continue: ${esc(nx.c.num)} · ${esc(nx.label)}</a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Fully certified! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button></div>
         </div>
         <div class="rankcard">
-          <div class="belt-art belt-${r.name.toLowerCase()}" aria-hidden="true"><span></span></div>
-          <p class="rank-name">${esc(r.name)} belt</p>
-          <p class="muted">${r.next ? `${plural(r.next[1] - r.n, 'chapter belt')} to ${r.next[0]}` : 'Highest rank reached'}</p>
-          <div class="statrow"><span><b>${S.xp.toLocaleString()}</b><small>XP</small></span><span><b>${streakNow()}</b><small>day streak</small></span><span><b>${r.n}/${CH.length}</b><small>belts</small></span></div>
+          ${idBadge(r)}
+          <p class="muted">${r.next ? `${plural(r.next[1] - r.n, 'certification')} to ${r.next[0]}` : 'Top of the ladder'}</p>
+          <div class="statrow"><span><b>${S.xp.toLocaleString()}</b><small>XP</small></span><span><b>${streakNow()}</b><small>day streak</small></span><span><b>${r.n}/${CH.length}</b><small>certified</small></span></div>
         </div>
       </section>
       <section class="today" aria-label="Today">
         <a class="todo" href="#/review/cards">${icon('cards')}<span><b>${due ? plural(due, 'card') + ' due' : 'No cards due'}</b><small>${due ? 'Spaced review keeps it in long-term memory' : 'Cards join your review once you start a lesson'}</small></span></a>
-        <a class="todo" href="#/review/rematch">${icon('ticket')}<span><b>${missed ? plural(missed, 'ticket') + ' to rematch' : 'No missed tickets'}</b><small>Questions you got wrong come back here</small></span></a>
+        <a class="todo" href="#/review/reopened">${icon('ticket')}<span><b>${missed ? plural(missed, 'reopened ticket') : 'No reopened tickets'}</b><small>Anything you miss reopens here until you solve it first try</small></span></a>
         <a class="todo" href="#/rush">${icon('rush')}<span><b>Run Rush${S.rush ? ` · best ${S.rush}` : ''}</b><small>60 seconds, every command you know</small></span></a>
       </section>
       <section class="how" aria-label="How each chapter works">
@@ -191,7 +194,7 @@
         <div>${icon('cards')}<b>Remember</b><small>Flashcards return just before you'd forget them</small></div>
         <div>${icon('run')}<b>Drill</b><small>Type real commands into a Run box, with hints only</small></div>
         <div>${icon('ticket')}<b>Solve</b><small>Help desk tickets explain why a wrong choice misses</small></div>
-        <div>${icon('belt')}<b>Prove it</b><small>Score 80% on the belt test to earn the chapter belt</small></div>
+        <div>${icon('cert')}<b>Get certified</b><small>Score 80% on the certification exam to move up the ladder</small></div>
       </section>
       ${partsHTML}
       <p class="fine">Lessons are original study notes that follow the chapter outline of <i>Windows 11 Inside Out</i> (Ed Bott, Microsoft Press, 2023), written for version 22H2. Use them alongside the book. Tier One isn't affiliated with Microsoft or Pearson. Progress is saved only in this browser.</p>
@@ -199,13 +202,13 @@
   }
 
   /* ---------- chapter shell ---------- */
-  const MODES = [['learn', 'Learn', 'learn'], ['cards', 'Flashcards', 'cards'], ['run', 'Run drills', 'run'], ['practice', 'Help desk practice', 'ticket'], ['belt', 'Belt test', 'belt']];
+  const MODES = [['learn', 'Learn', 'learn'], ['cards', 'Flashcards', 'cards'], ['run', 'Run drills', 'run'], ['practice', 'Help desk practice', 'ticket'], ['exam', 'Certification', 'cert']];
   function chapterView(c, mode, arg) {
     if (!MODES.some(m => m[0] === mode)) mode = 'learn';
     const label = /[A-C]/.test(c.num) ? 'Appendix' : 'Chapter';
     setTitle(`${label} ${c.num}: ${c.short}`, c.icon);
     const s = stats(c), dueN = dueCards(c).length;
-    const counts = { learn: `${(S.read[c.id] || []).length}/${c.learn.length}`, cards: dueN ? `${dueN} due` : '', run: c.run.length ? `${c.run.filter((_, i) => S.drills[`${c.id}:${i}`]).length}/${c.run.length}` : '', practice: `${c.quiz.filter((_, i) => S.practice[`${c.id}:${i}`]).length}/${c.quiz.length}`, belt: s.belt ? `${s.belt}%` : '' };
+    const counts = { learn: `${(S.read[c.id] || []).length}/${c.learn.length}`, cards: dueN ? `${dueN} due` : '', run: c.run.length ? `${c.run.filter((_, i) => S.drills[`${c.id}:${i}`]).length}/${c.run.length}` : '', practice: `${c.quiz.filter((_, i) => S.practice[`${c.id}:${i}`]).length}/${c.quiz.length}`, exam: s.belt >= 80 ? 'Certified' : s.belt ? `${s.belt}%` : '' };
     const idx = CH.indexOf(c), prev = CH[idx - 1], next = CH[idx + 1];
     app.innerHTML = `<div class="chap">
       <nav class="cnav" aria-label="Chapter sections">
@@ -217,7 +220,7 @@
       <div class="cbody" id="cbody"></div>
     </div>`;
     const body = $('#cbody');
-    ({ learn: learnMode, cards: cardsMode, run: runMode, practice: practiceMode, belt: beltMode })[mode](c, body, arg);
+    ({ learn: learnMode, cards: cardsMode, run: runMode, practice: practiceMode, exam: examMode })[mode](c, body, arg);
   }
 
   /* ---------- Learn ---------- */
@@ -356,7 +359,7 @@
     draw();
   }
 
-  /* ---------- Help desk practice (shared with Rematch) ---------- */
+  /* ---------- Help desk practice (shared with Reopened tickets) ---------- */
   function ticketHTML(c, qi, opts) {
     const q = c.quiz[qi], ord = opts.order;
     const tag = q[6] ? `<span class="tk-tag">${icon('ticket')}Ticket ${esc(c.num)}-${String(qi + 1).padStart(3, '0')}</span>` : `<span class="tk-tag plain">Question ${opts.n}</span>`;
@@ -385,7 +388,7 @@
         const first = !wrong, fresh = !S.practice[k];
         S.practice[k] = first ? 'first' : (S.practice[k] || 'retry');
         if (first && opts.rematch) delete S.missed[k];
-        $('#tkfb', host).innerHTML = `<div class="good-fb">${icon('check')}<p><b>${q[6] ? 'Ticket resolved.' : 'Correct.'}</b> ${first ? 'Solved on the first try.' : 'You found it.'}${opts.rematch && !first ? ' It stays in Rematch until you get it on the first try.' : ''}</p></div>`;
+        $('#tkfb', host).innerHTML = `<div class="good-fb">${icon('check')}<p><b>${q[6] ? 'Ticket resolved.' : 'Correct.'}</b> ${first ? 'Solved on the first try.' : 'You found it.'}${opts.rematch && !first ? ' It stays reopened until you solve it on the first try.' : ''}</p></div>`;
         $('.tk-row', host).innerHTML = `<button class="btn primary" type="button" data-act="tnext">Next ${icon('arrow')}</button>`;
         $('[data-act="tnext"]', host).focus();
         addXP(fresh ? (first ? 10 : 4) : (first ? 3 : 1));
@@ -409,25 +412,25 @@
   function practiceMode(c, body) {
     body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Help desk practice</h2><p class="muted">Real-world tickets and questions. A wrong pick tells you <i>why</i> it misses and which section to reread, never which one is right. Keys 1 to 4 pick an answer.</p></div><div id="prac"></div></div>`;
     const items = shuffle(c.quiz.map((_, qi) => ({ c, qi })));
-    practiceRunner($('#prac'), items, { done: () => { const n = c.quiz.filter((_, i) => S.practice[`${c.id}:${i}`] === 'first').length; return `<div class="empty card">${icon('ticket')}<h3>Queue cleared</h3><p class="muted">${n}/${c.quiz.length} solved on the first try${n === c.quiz.length ? '. You\'re ready for the belt test.' : '. Missed tickets wait in Review > Rematch.'}</p><div class="row"><button class="btn" type="button" data-act="restart">Shuffle and go again</button><a class="btn primary" href="#/c/${c.id}/belt">${icon('belt')}Belt test</a></div></div>`; } });
+    practiceRunner($('#prac'), items, { done: () => { const n = c.quiz.filter((_, i) => S.practice[`${c.id}:${i}`] === 'first').length; return `<div class="empty card">${icon('ticket')}<h3>Queue cleared</h3><p class="muted">${n}/${c.quiz.length} solved on the first try${n === c.quiz.length ? '. You\'re ready for the certification exam.' : '. Missed tickets reopen in Review.'}</p><div class="row"><button class="btn" type="button" data-act="restart">Shuffle and go again</button><a class="btn primary" href="#/c/${c.id}/exam">${icon('cert')}Certification exam</a></div></div>`; } });
   }
 
-  /* ---------- Belt test ---------- */
-  function beltMode(c, body) {
+  /* ---------- Certification exam ---------- */
+  function examMode(c, body) {
     const best = S.belts[c.id] || 0;
     const drills = shuffle(c.run.map((_, i) => i)).slice(0, 3);
-    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Belt test</h2></div><div class="card belt-intro">
-      <div class="belt-art belt-${best >= 80 ? 'black' : 'white'} small" aria-hidden="true"><span></span></div>
-      <div><p><b>${c.quiz.length} questions${drills.length ? ` + ${plural(drills.length, 'command')}` : ''}.</b> No hints and no feedback until the end. Score <b>80%</b> to earn this chapter's belt.</p>
-      <p class="muted">${best ? `Best score: ${best}%${best >= 80 ? ' · belt earned' : ''}.` : 'Not attempted yet.'} Missed items show the section to reread, not the answer.</p>
-      <button class="btn primary" type="button" id="beltgo">${icon('belt')}Start the test</button></div></div></div>`;
+    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Certification exam</h2></div><div class="card belt-intro">
+      ${seal(best >= 80)}
+      <div><p><b>${c.quiz.length} questions${drills.length ? ` + ${plural(drills.length, 'command')}` : ''}.</b> No hints and no feedback until the end. Score <b>80%</b> to get certified in this chapter.</p>
+      <p class="muted">${best ? `Best score: ${best}%${best >= 80 ? ' · certified' : ''}.` : 'Not attempted yet.'} Missed items show the section to reread, not the answer.</p>
+      <button class="btn primary" type="button" id="beltgo">${icon('cert')}Start the exam</button></div></div></div>`;
     $('#beltgo').onclick = () => {
       const items = shuffle(c.quiz.map((_, qi) => ({ t: 'q', qi }))).concat(drills.map(ri => ({ t: 'r', ri })));
       let pos = 0; const results = [];
       function draw() {
         if (pos >= items.length) return finish();
         const it = items[pos];
-        const top = `<div class="pad"><div class="mode-head"><h2>Belt test</h2><p class="muted">${pos + 1} of ${items.length}</p></div><div class="dots">${items.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>`;
+        const top = `<div class="pad"><div class="mode-head"><h2>Certification exam</h2><p class="muted">${pos + 1} of ${items.length}</p></div><div class="dots">${items.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>`;
         if (it.t === 'q') {
           body.innerHTML = top + ticketHTML(c, it.qi, { order: shuffle(c.quiz[it.qi][1].map((_, i) => i)), n: pos + 1, noHints: true }) + '</div>';
           view = { key: e => { const n = +e.key; const b = $$('.opt', body)[n - 1]; if (n >= 1 && b) b.click(); } };
@@ -444,15 +447,15 @@
         S.belts[c.id] = Math.max(S.belts[c.id] || 0, score);
         results.forEach(r => { if (!r.ok && r.it.t === 'q') S.missed[`${c.id}:${r.it.qi}`] = true; });
         save();
-        if (firstPass) addXP(50, 'belt earned'); else addXP(5);
+        if (firstPass) addXP(50, 'certified'); else addXP(5);
         const missed = results.filter(r => !r.ok);
-        body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Belt test results</h2></div>
+        body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Exam results</h2></div>
           <div class="card result ${pass ? 'pass' : 'fail'}">
-            <div class="belt-art ${pass ? 'belt-black stampin' : 'belt-white'} small" aria-hidden="true"><span></span></div>
-            <div><p class="score">${score}%</p><p><b>${pass ? (firstPass ? `${/[A-C]/.test(c.num) ? 'Appendix' : 'Chapter'} ${esc(c.num)} belt earned!` : 'Passed again. Belt kept.') : 'Not yet. You need 80%.'}</b></p><p class="muted">${results.length - missed.length} of ${results.length} correct${pass ? '' : '. Review the sections below, practice, and try again.'}</p></div>
+            ${seal(pass, pass ? 'stampin' : '')}
+            <div><p class="score">${score}%</p><p><b>${pass ? (firstPass ? `${/[A-C]/.test(c.num) ? 'Appendix' : 'Chapter'} ${esc(c.num)}: certified!${rank().n === RANKS.find(x => x[0] === rank().name)[1] && rank().idx > 0 ? ` Promoted to ${rank().name}.` : ''}` : 'Passed again. Still certified.') : 'Not yet. You need 80%.'}</b></p><p class="muted">${results.length - missed.length} of ${results.length} correct${pass ? '' : '. Review the sections below, practice, and try again.'}</p></div>
           </div>
           ${missed.length ? `<div class="card missed"><h3>Review these</h3><ul>${missed.map(r => r.it.t === 'q' ? `<li><p>${md(c.quiz[r.it.qi][0])}</p><p class="hint-line">${icon('bulb')}${md(c.quiz[r.it.qi][3])}</p><a href="#/c/${c.id}/learn/${c.quiz[r.it.qi][4]}">${icon('learn')}Reread: ${esc(c.learn[c.quiz[r.it.qi][4]].t)}</a></li>` : `<li><p>Command: ${md(c.run[r.it.ri][0])}</p><p class="hint-line">${icon('bulb')}${md(c.run[r.it.ri][2])}</p><a href="#/c/${c.id}/run">${icon('run')}Practice in Run drills</a></li>`).join('')}</ul></div>` : ''}
-          <div class="row"><a class="btn" href="#/c/${c.id}/belt" data-act="retake">Retake</a>${pass && CH[CH.indexOf(c) + 1] ? `<a class="btn primary" href="#/c/${CH[CH.indexOf(c) + 1].id}">Next chapter ${icon('arrow')}</a>` : `<a class="btn primary" href="#/c/${c.id}/practice">${icon('ticket')}Practice</a>`}</div></div>`;
+          <div class="row"><a class="btn" href="#/c/${c.id}/exam" data-act="retake">Retake</a>${pass && CH[CH.indexOf(c) + 1] ? `<a class="btn primary" href="#/c/${CH[CH.indexOf(c) + 1].id}">Next chapter ${icon('arrow')}</a>` : `<a class="btn primary" href="#/c/${c.id}/practice">${icon('ticket')}Practice</a>`}</div></div>`;
         const rt = $('[data-act="retake"]', body); rt.onclick = e => { e.preventDefault(); route(); };
       }
       draw();
@@ -463,14 +466,14 @@
   function reviewView(tab) {
     setTitle('Review', 'review');
     const due = allDue(), missed = Object.keys(S.missed).filter(k => { const [id, qi] = k.split(':'); const c = W.byId(id); return c && c.quiz[+qi]; });
-    app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Review</h2><p class="muted">Due flashcards from every chapter, and a rematch of every question you've missed.</p></div>
-      <div class="pivot" role="tablist"><a role="tab" href="#/review/cards" class="${tab === 'cards' ? 'on' : ''}" aria-selected="${tab === 'cards'}">${icon('cards')}Due cards <em>${due}</em></a><a role="tab" href="#/review/rematch" class="${tab === 'rematch' ? 'on' : ''}" aria-selected="${tab === 'rematch'}">${icon('ticket')}Rematch <em>${missed.length}</em></a></div>
+    app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Review</h2><p class="muted">Due flashcards from every chapter, and every ticket you've missed, reopened until you solve it first try.</p></div>
+      <div class="pivot" role="tablist"><a role="tab" href="#/review/cards" class="${tab === 'cards' ? 'on' : ''}" aria-selected="${tab === 'cards'}">${icon('cards')}Due cards <em>${due}</em></a><a role="tab" href="#/review/reopened" class="${tab === 'reopened' ? 'on' : ''}" aria-selected="${tab === 'reopened'}">${icon('ticket')}Reopened tickets <em>${missed.length}</em></a></div>
       <div id="rv"></div></div>`;
     const host = $('#rv');
-    if (tab === 'rematch') {
-      if (!missed.length) { host.innerHTML = `<div class="empty card">${icon('check')}<h3>Nothing to rematch</h3><p class="muted">Questions you get wrong in practice or a belt test show up here until you answer them right on the first try.</p></div>`; return; }
+    if (tab === 'reopened') {
+      if (!missed.length) { host.innerHTML = `<div class="empty card">${icon('check')}<h3>No reopened tickets</h3><p class="muted">Questions you get wrong in practice or a certification exam reopen here until you answer them right on the first try.</p></div>`; return; }
       const items = shuffle(missed.map(k => { const [id, qi] = k.split(':'); return { c: W.byId(id), qi: +qi }; }));
-      practiceRunner(host, items, { showChapter: true, rematch: true, done: () => `<div class="empty card">${icon('ticket')}<h3>Rematch round done</h3><p class="muted">${Object.keys(S.missed).length ? plural(Object.keys(S.missed).length, 'question') + ' still to beat on the first try.' : 'All cleared.'}</p><div class="row"><a class="btn primary" href="#/review/rematch" data-act="again2">Go again</a></div></div>` });
+      practiceRunner(host, items, { showChapter: true, rematch: true, done: () => `<div class="empty card">${icon('ticket')}<h3>Reopened queue worked</h3><p class="muted">${Object.keys(S.missed).length ? plural(Object.keys(S.missed).length, 'question') + ' still to beat on the first try.' : 'All cleared.'}</p><div class="row"><a class="btn primary" href="#/review/reopened" data-act="again2">Go again</a></div></div>` });
       host.addEventListener('click', e => { if (e.target.closest('[data-act="again2"]')) { e.preventDefault(); route(); } });
     } else {
       const keys = shuffle(CH.flatMap(c => c.cards.map((_, i) => ({ c, i })).filter(k => isDue(cardKey(c, k.i), c)))).slice(0, 40);
@@ -521,11 +524,11 @@
     const r = rank();
     const pctTxt = v => v === null ? '–' : `${Math.round(v * 100)}%`;
     app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Progress</h2></div>
-      <div class="card ladder"><div class="belt-art belt-${r.name.toLowerCase()}" aria-hidden="true"><span></span></div><div><p class="rank-name">${esc(r.name)} belt</p><p class="muted">${r.next ? `${plural(r.next[1] - r.n, 'more chapter belt')} to reach ${r.next[0]}.` : 'You hold the highest rank.'}</p>
-        <ol class="ranks">${RANKS.map(x => `<li class="${r.n >= x[1] ? 'got' : ''}">${beltChip(x[0])}<span>${x[0]}</span><small>${x[1]}</small></li>`).join('')}</ol></div></div>
+      <div class="card ladder">${idBadge(r)}<div><h3 class="ladder-h">Career ladder</h3><p class="rank-name">${esc(r.name)}</p><p class="muted">${r.next ? `${plural(r.next[1] - r.n, 'more certification')} to reach ${r.next[0]}.` : 'You made it to the top of the ladder.'}</p>
+        <ol class="ranks">${RANKS.map((x, i) => `<li class="${r.n >= x[1] ? 'got' : ''}${i === r.idx ? ' cur' : ''}">${tierChip(i)}<span>${x[0]}</span><small>${x[1]} certs</small></li>`).join('')}</ol></div></div>
       <div class="statgrid"><div class="card"><b>${S.xp.toLocaleString()}</b><small>XP</small></div><div class="card"><b>${streakNow()}</b><small>day streak</small></div><div class="card"><b>${Object.values(S.cards).filter(x => x.box >= 3).length}</b><small>cards mastered</small></div><div class="card"><b>${S.rush}</b><small>Run Rush best</small></div></div>
-      <div class="card tablewrap"><table class="prog"><caption class="sr">Progress by chapter</caption><thead><tr><th scope="col">Chapter</th><th scope="col">Learn</th><th scope="col">Cards</th><th scope="col">Drills</th><th scope="col">Practice</th><th scope="col">Belt test</th></tr></thead><tbody>
-        ${CH.map(c => { const s = stats(c); return `<tr><th scope="row"><a href="#/c/${c.id}">${esc(c.num)} · ${esc(c.short)}</a></th><td>${pctTxt(s.read)}</td><td>${pctTxt(s.cards)}</td><td>${pctTxt(s.drills)}</td><td>${pctTxt(s.practice)}</td><td>${s.belt >= 80 ? `<span class="got-belt">${icon('belt')}${s.belt}%</span>` : s.belt ? `${s.belt}%` : '–'}</td></tr>`; }).join('')}
+      <div class="card tablewrap"><table class="prog"><caption class="sr">Progress by chapter</caption><thead><tr><th scope="col">Chapter</th><th scope="col">Learn</th><th scope="col">Cards</th><th scope="col">Drills</th><th scope="col">Practice</th><th scope="col">Certification</th></tr></thead><tbody>
+        ${CH.map(c => { const s = stats(c); return `<tr><th scope="row"><a href="#/c/${c.id}">${esc(c.num)} · ${esc(c.short)}</a></th><td>${pctTxt(s.read)}</td><td>${pctTxt(s.cards)}</td><td>${pctTxt(s.drills)}</td><td>${pctTxt(s.practice)}</td><td>${s.belt >= 80 ? `<span class="got-belt">${icon('cert')}${s.belt}%</span>` : s.belt ? `${s.belt}%` : '–'}</td></tr>`; }).join('')}
       </tbody></table></div>
       <div class="card settings"><h3>Your data</h3><p class="muted">Progress lives only in this browser. Export it to move to another device.</p>
         <div class="row"><button class="btn" type="button" id="exp">Export progress</button><label class="btn" for="imp">Import progress</label><input id="imp" type="file" accept="application/json,.json" class="sr"><button class="btn bad" type="button" id="reset">Reset everything</button></div><p id="datamsg" class="muted" aria-live="polite"></p></div></div>`;

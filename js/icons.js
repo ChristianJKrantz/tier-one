@@ -1,7 +1,10 @@
 /* Tier One: small original line icons (24x24, stroke = currentColor). */
 'use strict';
 const ICONS = {
-  logo: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/><path d="M9 14l3 3 3-3M12 9v8"/>',
+  logo: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.5-2 2.5-5 2.5"/><path d="M11 9.5l1.5-1v5"/>',
+  headset: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.5-2 2.5-5 2.5h-1"/>',
+  cert: '<circle cx="12" cy="9" r="6"/><path d="M9.5 9l1.8 1.8 3.2-3.4"/><path d="M8.5 14l-1.5 7 5-2.5 5 2.5-1.5-7"/>',
+  lock: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
   start: '<rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="3.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="3.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/>',
   home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
   review: '<rect x="6" y="3" width="13" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10"/><path d="M10 9l2 2 4-4"/>',
