@@ -97,7 +97,7 @@
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
   $('#startbtn').innerHTML = icon('start');
-  [['home', 'home'], ['course', 'course'], ['review', 'review'], ['rush', 'rush'], ['progress', 'progress']].forEach(([k, ic]) => { const a = $(`[data-nav="${k}"]`); a.insertAdjacentHTML('afterbegin', icon(ic)); a.title = a.getAttribute('aria-label'); });
+  [['home', 'home'], ['course', 'course'], ['linux', 'penguin'], ['review', 'review'], ['rush', 'rush'], ['progress', 'progress']].forEach(([k, ic]) => { const a = $(`[data-nav="${k}"]`); a.insertAdjacentHTML('afterbegin', icon(ic)); a.title = a.getAttribute('aria-label'); });
   $('#startbtn').title = 'Start: all chapters (Ctrl+K)';
 
   function setTitle(text, ic) { $('#wintitle').textContent = text; $('#tbicon').innerHTML = icon(ic || 'logo'); document.title = text === 'Tier One' ? 'Tier One: Windows 11 help desk training' : `${text} · Tier One`; }
@@ -115,7 +115,7 @@
         if ((c.title + ' ' + c.short + ' ' + c.blurb).toLowerCase().includes(q)) hits.push({ c, label: `${c.num === 'A' || c.num === 'B' || c.num === 'C' ? 'Appendix' : 'Chapter'} ${c.num}: ${c.title}`, href: `#/c/${c.id}` });
         c.learn.forEach((s, i) => { if ((s.t + ' ' + s.p.join(' ') + ' ' + (s.key || []).join(' ')).toLowerCase().includes(q)) hits.push({ c, label: s.t, sub: `${c.num} · ${c.short}`, href: `#/c/${c.id}/learn/${i}` }); });
       });
-      COURSE.decks.forEach(d => d.terms.forEach(t => { const x = COURSE.terms[t]; if (!hits.some(h => h.href.endsWith('/' + t)) && (x.t + ' ' + x.d).toLowerCase().includes(q)) hits.push({ c: { part: 'c', icon: 'course' }, label: x.t, sub: `NST 115 · ${d.title}`, href: `#/course/${d.id}/sheet/${t}` }); }));
+      COURSE.decks.forEach(d => d.terms.forEach(t => { const x = COURSE.terms[t]; if (!hits.some(h => h.href.endsWith('/' + t)) && (x.t + ' ' + x.d).toLowerCase().includes(q)) hits.push({ c: { part: 'c', icon: d.kind === 'linux' ? 'penguin' : 'course' }, label: x.t, sub: d.kind === 'linux' ? `Linux · ${d.title}` : `NST 115 · Chapter ${d.num}: ${d.sub}`, href: `${d.kind === 'linux' ? '#/linux' : '#/course'}/${d.id}/sheet/${t}` }); }));
       body = `<h2 class="st-h">Best matches</h2>${hits.length ? `<ul class="st-res">${hits.slice(0, 12).map(h => `<li><a href="${h.href}"><span class="st-ic sm part${h.c.part}">${icon(h.c.icon)}</span><span><b>${esc(h.label)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : ''}</span></a></li>`).join('')}</ul>` : '<p class="muted st-none">No topics match. Try a tool name like "BitLocker" or "ipconfig".</p>'}`;
     }
     return body;
@@ -148,9 +148,10 @@
     else if (parts[0] === 'rush') rushView();
     else if (parts[0] === 'progress') progressView();
     else if (parts[0] === 'course') courseView(parts[1], parts[2], parts[3]);
+    else if (parts[0] === 'linux') parts[1] ? courseView(parts[1], parts[2], parts[3]) : linuxHome();
     else homeView();
     renderTray();
-    if (!((parts[0] === 'c' || parts[0] === 'course') && parts[3] !== undefined)) app.scrollTop = 0;
+    if (!(['c', 'course', 'linux'].includes(parts[0]) && parts[3] !== undefined)) app.scrollTop = 0;
     app.focus({ preventScroll: true });
   }
   window.addEventListener('hashchange', route);
@@ -186,7 +187,7 @@
           <div class="statrow"><span><b>${S.xp.toLocaleString()}</b><small>XP</small></span><span><b>${streakNow()}</b><small>day streak</small></span><span><b>${r.n}/${CH.length}</b><small>certified</small></span></div>
         </div>
       </section>
-      <a class="coursebanner" href="#/course">${icon('course')}<span><b>NST 115 exam prep</b><small>Unit exam and quiz reviews, Linux unit, terminal and permissions drills</small></span><span class="cb-go">Open ${icon('arrow')}</span></a>
+      <a class="coursebanner" href="#/course">${icon('course')}<span><b>NST 115 exam prep</b><small>Quiz and unit exam reviews combined, chapter by chapter</small></span><span class="cb-go">Open ${icon('arrow')}</span></a>
       <section class="today" aria-label="Today">
         <a class="todo" href="#/review/cards">${icon('cards')}<span><b>${due ? plural(due, 'card') + ' due' : 'No cards due'}</b><small>${due ? 'Spaced review keeps it in long-term memory' : 'Cards join your review once you start a lesson'}</small></span></a>
         <a class="todo" href="#/review/reopened">${icon('ticket')}<span><b>${missed ? plural(missed, 'reopened ticket') : 'No reopened tickets'}</b><small>Anything you miss reopens here until you solve it first try</small></span></a>
@@ -549,6 +550,9 @@
   const deckPct = d => Math.round(d.terms.filter(mastered).length / d.terms.length * 100);
   const srcTag = s => s === 'class' ? 'Class materials' : s === 'gen' ? 'General knowledge: check your notes' : `Book ch. ${s.slice(1)}`;
   const deckById = id => CO.decks.find(d => d.id === id);
+  const base = d => d.kind === 'linux' ? '#/linux' : '#/course';
+  const dIcon = d => d.kind === 'linux' ? 'penguin' : 'course';
+  const onChips = id => (CO.on[id] || []).map(l => `<span class="onchip ${/Unit/.test(l) ? 'unit' : ''}">${esc(l)}</span>`).join('');
   const DMODES = [['sheet', 'Review sheet', 'learn'], ['flash', 'Flash review', 'cards'], ['exam', 'Practice exam', 'ticket']];
   function courseView(id, mode, arg) {
     if (id === 'terminal') return terminalView();
@@ -556,43 +560,47 @@
     const d = deckById(id);
     if (!d) return courseHome();
     if (!DMODES.some(m => m[0] === mode)) mode = 'sheet';
-    setTitle(`NST 115 · ${d.title}`, 'course');
+    setTitle(`${d.kind === 'linux' ? 'Linux' : 'NST 115'} · ${d.title}`, dIcon(d));
     const best = cS().best[d.id];
     app.innerHTML = `<div class="chap">
       <nav class="cnav" aria-label="Review sections">
-        <div class="cnav-head"><span class="cnav-ic ${d.kind}">${icon(d.kind === 'linux' ? 'penguin' : d.kind === 'unit' ? 'cert' : 'ticket')}</span><div><small>${d.kind === 'unit' ? 'Unit exam review' : d.kind === 'quiz' ? 'Quiz review' : 'Linux unit'}</small><b>${esc(d.title)}: ${esc(d.sub)}</b></div></div>
-        <ul class="modes">${DMODES.map(m => `<li><a href="#/course/${d.id}/${m[0]}" class="${m[0] === mode ? 'on' : ''}" ${m[0] === mode ? 'aria-current="page"' : ''}>${icon(m[2])}<span>${m[1]}</span><em>${m[0] === 'sheet' ? `${deckPct(d)}%` : m[0] === 'exam' && best !== undefined ? `best ${best}%` : ''}</em></a></li>`).join('')}
-          ${d.perms ? `<li><a href="#/course/perms">${icon('lock')}<span>Permissions trainer</span></a></li>` : ''}${d.kind === 'linux' ? `<li><a href="#/course/terminal">${icon('term')}<span>Terminal drills</span></a></li>` : ''}</ul>
-        ${mode === 'sheet' ? `<ol class="secs">${d.terms.map(t => `<li><a href="#/course/${d.id}/sheet/${t}" class="${mastered(t) ? 'done' : ''}">${esc(CO.terms[t].t)}</a></li>`).join('')}</ol>` : ''}
-        <div class="cnav-foot"><a href="#/course">${icon('back')}All reviews</a></div>
+        <div class="cnav-head"><span class="cnav-ic ${d.kind}">${d.kind === 'chapter' ? `<span class="cnum">${d.num}</span>` : icon('penguin')}</span><div><small>${d.kind === 'chapter' ? esc((d.tests || []).join(' + ')) : 'Linux unit'}</small><b>${esc(d.kind === 'chapter' ? d.sub : `${d.title}: ${d.sub}`)}</b></div></div>
+        <ul class="modes">${DMODES.map(m => `<li><a href="${base(d)}/${d.id}/${m[0]}" class="${m[0] === mode ? 'on' : ''}" ${m[0] === mode ? 'aria-current="page"' : ''}>${icon(m[2])}<span>${m[1]}</span><em>${m[0] === 'sheet' ? `${deckPct(d)}%` : m[0] === 'exam' && best !== undefined ? `best ${best}%` : ''}</em></a></li>`).join('')}
+          ${d.perms ? `<li><a href="#/linux/perms">${icon('lock')}<span>Permissions trainer</span></a></li>` : ''}${d.kind === 'linux' ? `<li><a href="#/linux/terminal">${icon('term')}<span>Terminal drills</span></a></li>` : ''}</ul>
+        ${mode === 'sheet' ? `<ol class="secs">${d.terms.map(t => `<li><a href="${base(d)}/${d.id}/sheet/${t}" class="${mastered(t) ? 'done' : ''}">${esc(CO.terms[t].t)}</a></li>`).join('')}</ol>` : ''}
+        <div class="cnav-foot"><a href="${base(d)}">${icon('back')}${d.kind === 'linux' ? 'Linux unit' : 'All chapters'}</a></div>
       </nav><div class="cbody" id="cbody"></div></div>`;
     const body = $('#cbody');
     ({ sheet: sheetMode, flash: flashMode, exam: cExamMode })[mode](d, body, arg);
   }
   function courseHome() {
     setTitle('NST 115 exam prep', 'course');
-    const card = d => { const p = deckPct(d), b = cS().best[d.id]; return `<a class="tile deck ${d.kind}" href="#/course/${d.id}"><span class="tile-ic ${d.kind}">${icon(d.kind === 'linux' ? 'penguin' : d.kind === 'unit' ? 'cert' : 'ticket')}</span><span class="tile-txt"><small>${esc(d.sub)}</small><b>${esc(d.title)}</b><small>${d.terms.length} items${b !== undefined ? ` · exam best ${b}%` : ''}</small></span>${ring(p, `${d.title}: ${p}% of items mastered`)}</a>`; };
-    const units = CO.decks.filter(d => d.kind === 'unit');
+    const units = [1, 2, 3, 4];
     app.innerHTML = `<div class="pad">
-      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep</h2><p class="muted">Every item from your instructor's review sheets, answered from the textbook and your class materials. Start with the unit exams. Each review has a <b>review sheet</b> (answers you can cover and test yourself on), <b>flash review</b>, and a <b>practice exam</b> that never gives the answer away.</p></div>
-      <h3 class="part-h">Unit exams</h3>
-      <div class="units">${units.map(d => { const p = deckPct(d), b = cS().best[d.id], qs = CO.decks.filter(q => q.kind === 'quiz' && q.unit === d.unit); return `<div class="unitcard card"><div class="uc-top"><span class="uc-num">${d.unit}</span><div><b>${esc(d.title)}</b><small>${esc(d.sub)} · ${d.terms.length} items</small></div>${ring(p, `${p}% mastered`)}</div>
-        <div class="uc-bar"><i style-w="${p}"></i></div>
-        <p class="muted small">${b !== undefined ? `Practice exam best: <b>${b}%</b>` : 'Practice exam not taken yet'}${qs.length ? ` · related quizzes: ${qs.map(q => `<a href="#/course/${q.id}">${esc(q.title.replace('Quiz ', 'Q'))}</a>`).join(', ')}` : ''}</p>
-        <div class="row"><a class="btn" href="#/course/${d.id}/sheet">${icon('learn')}Review sheet</a><a class="btn primary" href="#/course/${d.id}/exam">${icon('ticket')}Practice exam</a></div></div>`; }).join('')}</div>
-      <h3 class="part-h">Quiz reviews</h3><div class="tiles">${CO.decks.filter(d => d.kind === 'quiz').map(card).join('')}</div>
-      <h3 class="part-h">Linux unit</h3><div class="tiles">${CO.decks.filter(d => d.kind === 'linux').map(card).join('')}
-        <a class="tile deck" href="#/course/terminal"><span class="tile-ic linux">${icon('term')}</span><span class="tile-txt"><small>Type real commands</small><b>Terminal drills</b><small>${CO.terminal.length} tasks</small></span></a>
-        <a class="tile deck" href="#/course/perms"><span class="tile-ic linux">${icon('lock')}</span><span class="tile-txt"><small>rwx ⇄ 755</small><b>Permissions trainer</b><small>Endless practice</small></span></a></div>
-      <p class="fine">Answers tagged <b>Book ch.</b> come from <i>Windows 11 Inside Out</i>; <b>Class materials</b> from your slides and handouts; <b>General knowledge</b> items aren't covered in either, so compare them with your notes. Progress is saved in this browser.</p></div>`;
-    $$('.uc-bar i').forEach(i => i.style.width = i.getAttribute('style-w') + '%');
+      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep by chapter</h2><p class="muted">Each chapter combines everything from its <b>quiz review</b> and its part of the <b>unit exam review</b>, answered from the textbook and your class materials. Badges show which test each item is on. Linux has <a href="#/linux">its own tab</a>.</p></div>
+      ${units.map(u => { const ds = CO.decks.filter(d => d.kind === 'chapter' && d.unit === u); return `<h3 class="part-h">Chapters ${ds[0].num}-${ds[ds.length - 1].num} <span class="muted">· Unit Exam ${u}</span></h3><div class="tiles chtiles">${ds.map(chTile).join('')}</div>`; }).join('')}
+      <h3 class="part-h">Chapters 13-14</h3><div class="tiles chtiles">${CO.decks.filter(d => d.kind === 'chapter' && !d.unit).map(chTile).join('')}</div>
+      <p class="fine">Answers tagged <b>Book ch.</b> come from <i>Windows 11 Inside Out</i>; <b>Class materials</b> from your slides, handouts, the assigned article and video; <b>General knowledge</b> items aren't covered in either, so compare them with your notes. Progress is saved in this browser.</p></div>`;
+  }
+  function chTile(d) {
+    const p = deckPct(d), b = cS().best[d.id];
+    return `<a class="tile deck" href="#/course/${d.id}"><span class="tile-ic chapter"><span class="cnum">${d.num}</span></span><span class="tile-txt"><small>Chapter ${d.num} · ${d.terms.length} items</small><b>${esc(d.sub)}</b><span class="tchips">${(d.tests || []).map(t => `<span class="onchip ${/Unit/.test(t) ? 'unit' : ''}">${esc(t)}</span>`).join('')}</span>${b !== undefined ? `<small>Practice exam best ${b}%</small>` : ''}</span>${ring(p, `${d.sub}: ${p}% of items mastered`)}</a>`;
+  }
+  function linuxHome() {
+    setTitle('Linux unit', 'penguin');
+    const card = d => { const p = deckPct(d); return `<a class="tile deck" href="#/linux/${d.id}"><span class="tile-ic linux">${icon('penguin')}</span><span class="tile-txt"><small>${esc(d.sub)}</small><b>${esc(d.title)}</b><small>${d.terms.length} items${cS().best[d.id] !== undefined ? ` · exam best ${cS().best[d.id]}%` : ''}</small></span>${ring(p, `${d.title}: ${p}% mastered`)}</a>`; };
+    app.innerHTML = `<div class="pad"><div class="mode-head"><p class="eyebrow">NST 115 · Linux</p><h2>Linux unit</h2><p class="muted">The Linux days, the top 25 commands, and hands-on drills. Each set has a review sheet, flash review and practice exam.</p></div>
+      <h3 class="part-h">Lessons</h3><div class="tiles">${CO.decks.filter(d => d.kind === 'linux').map(card).join('')}</div>
+      <h3 class="part-h">Hands-on practice</h3><div class="tiles">
+        <a class="tile deck" href="#/linux/terminal"><span class="tile-ic linux">${icon('term')}</span><span class="tile-txt"><small>Type real commands</small><b>Terminal drills</b><small>${CO.terminal.length} tasks</small></span></a>
+        <a class="tile deck" href="#/linux/perms"><span class="tile-ic linux">${icon('lock')}</span><span class="tile-txt"><small>rwx ⇄ 755</small><b>Permissions trainer</b><small>Endless practice</small></span></a></div></div>`;
   }
   function sheetMode(d, body, arg) {
-    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>${esc(d.title)} review sheet</h2><p class="muted">Items in your instructor's order. Turn on <b>Recall mode</b> to hide the answers, say each one from memory, reveal, then mark it.</p></div>
+    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>${esc(d.kind === 'chapter' ? `Chapter ${d.num}: ${d.sub}` : d.title)}</h2><p class="muted">${d.kind === 'chapter' ? 'Quiz items first, then the rest of the unit exam items for this chapter.' : 'Items in your instructor\'s order.'} Turn on <b>Recall mode</b> to hide the answers, say each one from memory, reveal, then mark it.</p></div>
       ${d.note ? `<div class="think">${icon('bulb')}<p><b>Heads up:</b> ${esc(d.note)}</p></div>` : ''}
       <div class="recall-bar"><label class="switch"><input type="checkbox" id="recall"><span></span>Recall mode</label><small class="muted">${d.terms.filter(mastered).length}/${d.terms.length} marked "Got it"</small></div>
-      ${d.terms.map((id, i) => { const t = CO.terms[id]; return `<article class="sec card item" id="t-${id}" tabindex="-1"><h2><span class="secnum">${i + 1}</span>${esc(t.t)}</h2><div class="ans prose">${paras(t.a)}</div><button type="button" class="reveal btn ghost" data-act="show">${icon('eye')}Show answer</button><div class="sec-foot"><span class="src">${esc(srcTag(t.s))}</span><span class="row"><button class="btn mini ${(cS().m[id] || 0) === 1 ? 'on-bad' : ''}" type="button" data-act="mark" data-id="${id}" data-v="1">Again</button><button class="btn mini ${mastered(id) ? 'on-good' : ''}" type="button" data-act="mark" data-id="${id}" data-v="2">${icon('check')}Got it</button></span></div></article>`; }).join('')}
-      <div class="nextbar"><a class="btn primary" href="#/course/${d.id}/exam">${icon('ticket')}Take the practice exam</a></div></div>`;
+      ${d.terms.map((id, i) => { const t = CO.terms[id]; return `<article class="sec card item" id="t-${id}" tabindex="-1"><h2><span class="secnum">${i + 1}</span>${esc(t.t)}</h2><div class="ans prose">${paras(t.a)}</div><button type="button" class="reveal btn ghost" data-act="show">${icon('eye')}Show answer</button><div class="sec-foot"><span class="src">${onChips(id)}${esc(srcTag(t.s))}</span><span class="row"><button class="btn mini ${(cS().m[id] || 0) === 1 ? 'on-bad' : ''}" type="button" data-act="mark" data-id="${id}" data-v="1">Again</button><button class="btn mini ${mastered(id) ? 'on-good' : ''}" type="button" data-act="mark" data-id="${id}" data-v="2">${icon('check')}Got it</button></span></div></article>`; }).join('')}
+      <div class="nextbar"><a class="btn primary" href="${base(d)}/${d.id}/exam">${icon('ticket')}Take the practice exam</a></div></div>`;
     const rc = $('#recall');
     rc.addEventListener('change', () => { body.classList.toggle('recall', rc.checked); $$('.item', body).forEach(x => x.classList.remove('shown')); });
     body.onclick = e => {
@@ -613,7 +621,7 @@
     let q = shuffle(d.terms.filter(t => !mastered(t))); if (!q.length) q = shuffle(d.terms);
     let flipped = false, n = 0;
     const draw = () => {
-      if (!q.length) { body.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>Round done: ${n} reviewed</h3><p class="muted">${d.terms.filter(mastered).length}/${d.terms.length} items marked "Got it".</p><div class="row"><a class="btn" href="#/course/${d.id}/flash" data-act="again">Go again</a><a class="btn primary" href="#/course/${d.id}/exam">${icon('ticket')}Practice exam</a></div></div></div>`; return; }
+      if (!q.length) { body.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>Round done: ${n} reviewed</h3><p class="muted">${d.terms.filter(mastered).length}/${d.terms.length} items marked "Got it".</p><div class="row"><a class="btn" href="${base(d)}/${d.id}/flash" data-act="again">Go again</a><a class="btn primary" href="${base(d)}/${d.id}/exam">${icon('ticket')}Practice exam</a></div></div></div>`; return; }
       const t = CO.terms[q[0]]; flipped = false;
       body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Flash review</h2><p class="muted">${plural(q.length, 'item')} left. Explain it out loud, then flip.</p></div>
         <div class="flash" id="flash"><div class="face front"><small>Review item</small><p>${esc(t.t)}</p></div><div class="face back prose" hidden><small>Answer</small>${paras(t.a)}</div></div>
@@ -626,9 +634,9 @@
     draw();
   }
   function cExamMode(d, body) {
-    const pool = d.terms.length >= 4 ? d.terms : CO.decks.filter(x => x.unit === d.unit).flatMap(x => x.terms);
-    const total = Math.min(d.terms.length, d.kind === 'unit' ? 25 : 15);
-    const intro = () => { body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Practice exam</h2></div><div class="card belt-intro">${seal((cS().best[d.id] || 0) >= 80)}<div><p><b>${total} questions</b> drawn from the ${esc(d.title)} review sheet. Some show a definition and ask for the item, others ask what an item means.</p><p class="muted">A wrong pick tells you what that choice actually is, so you can try again. Only first-try answers count toward your score.${cS().best[d.id] !== undefined ? ` Best so far: ${cS().best[d.id]}%.` : ''}</p><button class="btn primary" type="button" id="cgo">${icon('ticket')}Start</button></div></div></div>`; $('#cgo').onclick = start; };
+    const pool = d.terms.length >= 6 ? d.terms : CO.decks.filter(x => x.kind === d.kind && (x.unit === d.unit || !d.unit)).flatMap(x => x.terms);
+    const total = Math.min(d.terms.length, 20);
+    const intro = () => { body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Practice exam</h2></div><div class="card belt-intro">${seal((cS().best[d.id] || 0) >= 80)}<div><p><b>${total} questions</b> drawn from ${esc(d.kind === 'chapter' ? `Chapter ${d.num}` : d.title)}. Some show a definition and ask for the item, others ask what an item means.</p><p class="muted">A wrong pick tells you what that choice actually is, so you can try again. Only first-try answers count toward your score.${cS().best[d.id] !== undefined ? ` Best so far: ${cS().best[d.id]}%.` : ''}</p><button class="btn primary" type="button" id="cgo">${icon('ticket')}Start</button></div></div></div>`; $('#cgo').onclick = start; };
     function start() {
       const qs = shuffle(d.terms).slice(0, total).map(id => {
         const others = shuffle(Array.from(new Set(pool)).filter(x => x !== id && CO.terms[x].d !== CO.terms[id].d)).slice(0, 3);
@@ -665,8 +673,8 @@
         view = null; const score = Math.round(firstRight / qs.length * 100), prev = cS().best[d.id];
         cS().best[d.id] = Math.max(prev || 0, score); save(); addXP(Math.round(score / 10) + (prev === undefined || score > prev ? 5 : 0), score > (prev || 0) ? 'new best' : '');
         body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Results</h2></div><div class="card result ${score >= 80 ? 'pass' : 'fail'}">${seal(score >= 80, score >= 80 ? 'stampin' : '')}<div><p class="score">${score}%</p><p><b>${score >= 80 ? 'Exam-ready on this review.' : 'Keep studying, you\'re getting there.'}</b></p><p class="muted">${firstRight} of ${qs.length} right on the first try.</p></div></div>
-          ${missed.length ? `<div class="card missed"><h3>Restudy these</h3><ul>${missed.map(id => `<li><a href="#/course/${d.id}/sheet/${id}">${icon('learn')}${esc(CO.terms[id].t)}</a></li>`).join('')}</ul></div>` : ''}
-          <div class="row"><button class="btn" type="button" id="cagain">Retake</button><a class="btn primary" href="#/course">All reviews</a></div></div>`;
+          ${missed.length ? `<div class="card missed"><h3>Restudy these</h3><ul>${missed.map(id => `<li><a href="${base(d)}/${d.id}/sheet/${id}">${icon('learn')}${esc(CO.terms[id].t)}</a></li>`).join('')}</ul></div>` : ''}
+          <div class="row"><button class="btn" type="button" id="cagain">Retake</button><a class="btn primary" href="${base(d)}">${d.kind === 'linux' ? 'Linux unit' : 'All chapters'}</a></div></div>`;
         $('#cagain').onclick = start;
       };
       draw();
@@ -674,11 +682,11 @@
     intro();
   }
   function terminalView() {
-    setTitle('NST 115 · Terminal drills', 'term');
+    setTitle('Linux · Terminal drills', 'term');
     const items = CO.terminal; let order = shuffle(items.map((_, i) => i)), pos = 0, hints = 0, wrong = 0, solved = 0;
     const nrm = s => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').replace(/\s*\|\s*/g, ' | ').trim();
     const draw = () => {
-      if (pos >= order.length) { app.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>${solved}/${items.length} solved</h3><p class="muted">Run through them again until every one is automatic.</p><div class="row"><a class="btn primary" href="#/course/terminal" id="tagain">Again</a><a class="btn" href="#/course">All reviews</a></div></div></div>`; $('#tagain').onclick = e => { e.preventDefault(); terminalView(); }; return; }
+      if (pos >= order.length) { app.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>${solved}/${items.length} solved</h3><p class="muted">Run through them again until every one is automatic.</p><div class="row"><a class="btn primary" href="#/linux/terminal" id="tagain">Again</a><a class="btn" href="#/linux">Linux unit</a></div></div></div>`; $('#tagain').onclick = e => { e.preventDefault(); terminalView(); }; return; }
       const r = items[order[pos]]; hints = 0; wrong = 0;
       app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Terminal drills</h2><p class="muted">Type the Linux command. <b>Case matters</b>, just like in a real terminal. Hints narrow it down; no answers given.</p></div><div class="dots">${order.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>
         <div class="term card"><div class="term-task">${esc(r[0])}</div><form class="term-line" id="tform" autocomplete="off"><label for="tin" class="prompt">student@ubuntu:~$</label><input id="tin" type="text" spellcheck="false" autocapitalize="off" autocorrect="off"></form><div class="term-out" id="tout" aria-live="polite"></div></div>
@@ -702,7 +710,7 @@
     draw();
   }
   function permsView() {
-    setTitle('NST 115 · Permissions trainer', 'lock');
+    setTitle('Linux · Permissions trainer', 'lock');
     const sym = n => ['r', 'w', 'x'].map((c, i) => (n & (4 >> i)) ? c : '-').join('');
     let streak = 0, hints = 0;
     const draw = () => {

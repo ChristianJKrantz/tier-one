@@ -11,12 +11,14 @@ Object.values(C.terms).forEach(t => {
   const name = norm(t.t);
   if (name.length >= 3 && name.split(' ').length <= 3 && !t.id.startsWith('cmd_')) check(!norm(t.d).split(' ').join(' ').includes(name), `${t.id} definition names the item ("${t.t}")`);
 });
+check(!C.unplaced.length, `unit exam items not placed in any chapter: ${C.unplaced}`);
+C.decks.forEach(d => check(d.kind === 'linux' || !d.terms.some(t => t.startsWith('lx_') || t.startsWith('cmd_')), `${d.id}: Linux items must stay in the Linux section`));
 C.decks.forEach(d => {
-  check(d.terms.length >= 4, `${d.id} needs at least 4 items`);
+  check(d.terms.length >= 4 || d.kind === 'chapter', `${d.id} needs at least 4 items`);
   d.terms.forEach(id => check(C.terms[id], `${d.id} refers to missing item ${id}`));
   check(new Set(d.terms).size === d.terms.length, `${d.id} lists an item twice`);
 });
-['ue1', 'ue2', 'ue3', 'ue4', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'lx1', 'lx2', 'lx3', 'lx25'].forEach(id => check(C.decks.some(d => d.id === id), `missing deck ${id}`));
+[...Array.from({ length: 14 }, (_, i) => 'ch' + (i + 1)), 'lx1', 'lx2', 'lx3', 'lx25'].forEach(id => check(C.decks.some(d => d.id === id), `missing deck ${id}`));
 C.terminal.forEach((r, i) => {
   check(r.length === 4 && r[1].length, `terminal ${i} malformed`);
   [r[2], r[3]].forEach((h, k) => r[1].forEach(a => check(!h.replace(/\s+/g, '').includes(a.replace(/\s+/g, '')) || a.length < 3, `terminal ${i} hint ${k + 1} contains "${a}"`)));

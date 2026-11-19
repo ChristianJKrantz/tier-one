@@ -46,12 +46,14 @@ Every study mode follows one rule: **the site never shows you the right answer.*
 <img src="docs/run.png" alt="Run drill dialog after two hints: 'The switch is a three-letter word meaning everything'" width="720">
 
 ### NST 115 exam prep tab
-A separate tab (graduation-cap icon on the taskbar) built from the NST 115 review sheets and Linux unit materials, with the **unit exams up front**:
-- **Unit Exams 1-4** and **Quizzes 4-14**: every review-sheet item in the instructor's order, answered from the textbook and class materials, and tagged with its source (book chapter, class materials, or general knowledge to check against notes)
+A separate tab (graduation-cap icon on the taskbar) built from the NST 115 review sheets, **organized by chapter only**:
+- **Chapters 1-14**: each chapter combines its quiz review and its part of the unit exam review. Every item is answered from the textbook and class materials, with badges showing which test it's on (**Quiz 8**, **Unit Exam 3**) and a source tag (book chapter, class materials, or general knowledge to check against notes)
 - **Review sheet** with Recall mode (answers hidden until you've said them), **Flash review**, and a **Practice exam** that tells you what a wrong pick actually is but never reveals the right one
-- **Linux unit**: Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers)
 
-<img src="docs/course.png" alt="NST 115 exam prep: four unit exam cards, then quiz reviews" width="720">
+### Linux tab
+The Linux unit has its own tab (penguin icon): Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers).
+
+<img src="docs/course.png" alt="NST 115 exam prep: chapters 1 to 14 with Quiz and Unit Exam badges" width="720">
 
 ### Review, Run Rush and progress
 - **Review** collects due flashcards from every chapter, plus **Reopened tickets**: every question you've missed reopens until you solve it on the first try.

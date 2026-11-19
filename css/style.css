@@ -486,3 +486,11 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .term-out { min-height: 22px; margin-top: 10px; font-size: 14px; }
 .term-out .ok { color: #7fd17f; } .term-out .err { color: #ff8f85; } .term-out .hintline { color: #ffcf6b; }
 @media (max-width: 760px) { .units { grid-template-columns: 1fr; } .coursebanner .cb-go { display: none; } .prompt { font-size: 12px; } }
+.tile-ic.chapter, .cnav-ic.chapter { background: var(--accent); }
+.cnum { font-family: var(--display); font-weight: 700; font-size: 19px; color: var(--on-accent); }
+.cnav-ic .cnum { font-size: 21px; }
+.tchips { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0 1px; }
+.onchip { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 9px; background: var(--warn-bg); color: var(--warn); margin-right: 6px; white-space: nowrap; }
+.onchip.unit { background: var(--accent-bg); color: var(--accent); }
+.chtiles { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.tiles + .part-h { margin-top: 20px; }

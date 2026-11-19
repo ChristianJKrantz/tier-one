@@ -267,23 +267,52 @@ LXC.forEach(([c, d]) => T('cmd_' + c.replace(/\W/g, '_'), c, d, [d], 'class'));
 T('lx_etc', '/etc/passwd and /etc/group', 'Files where Linux stores user accounts (/etc/passwd) and groups (/etc/group).', ['**/etc/passwd** lists **user accounts**; **/etc/group** lists **groups**. They\'re **files**, not folders: view with `cat`, `less` or `vim` (not `cd`). Your new user appears at the bottom.'], 'class');
 T('lx_case', 'Case sensitivity', 'Linux treats ls and LS (and File.txt and file.txt) as different.', ['Linux is **case-sensitive**: `ls` ≠ `LS`, and `Batman.txt` ≠ `batman.txt`. Type commands exactly.'], 'class');
 
-/* ---------- Decks (review sheets) ---------- */
+/* ---------- Windows reviews, one per chapter ----------
+   Each chapter combines its quiz review and the unit exam items for that chapter.
+   SHEETS records which review sheet(s) each item came from, so the review shows "Quiz 8 · Unit Exam 3" badges. */
+const SHEETS = {
+  ue1: ['Unit Exam 1', ['pchc', 'cortana', 'parts4', 'fexp', 'upg3', 'edge', 'minreq', 'tmpfold', 'peek', 'snapshot', 'taskview', 'jumplist', 'vdi', 'vmadv', 'wu', 'oem', 'snap', 'iso', 'dualboot', 'smode', 'biosuefi', 'accttypes']],
+  ue2: ['Unit Exam 2', ['affinity', 'access', 'focus', 'sync', 'themes', 'fit', 'slideshow', 'spotlight', 'tmkey', 'autoplay', 'store3', 'tm', 'teamsdef', 'provapps', 'instapps', 'backcompat', 'startup', 'theme3p', 'dark', 'quickassist', 'uacwhy', 'cattlist', 'provcat']],
+  ue3: ['Unit Exam 3', ['syspart', 'basic', 'primary', 'optimize', 'diskmgmt', 'diskpart', 'gpt', 'mbr', 'dynamic', 'ntfs', 'errchk', 'sspaces', 'simple', 'ssd', 'details', 'quickacc', 'indexing', 'libraries', 'navpane', 'boolean', 'grep', 'osi', 'dom', 'cookie', 'edge']],
+  ue4: ['Unit Exam 4', ['permissions', 'tpm', 'compmgmt', 'uacwarn', 'wpa', 'wifisec', 'featupd', 'aslr', 'hello', 'uac', 'bitlocker', 'dep', 'ip4', 'defaccts', 'elam', 'sid', 'secintel', 'smartscreen', 'measured', 'troublestrat', 'polp', 'ipmanual']],
+  q4: ['Quiz 4', ['persimp', 'sync', 'slideshow', 'spotlight', 'wallfold', 'theme3p', 'focus', 'access', 'dark', 'lock', 'fit']],
+  q5: ['Quiz 5', ['compat', 'apptypes', 'store3', 'uacwhy', 'tm', 'autoplay', 'backcompat', 'tmkey', 'startup']],
+  q6: ['Quiz 6', ['sysapps', 'provapps', 'instapps', 'connexp', 'snip', 'provcat', 'quickassist', 'teamsnav', 'tv_teams', 'tv_meet', 'articles']],
+  q7: ['Quiz 7', ['dns', 'tcp', 'udp', 'http', 'cookie', 'rtree', 'cssom', 'dom', 'compos', 'parsing', 'painting', 'osi', 'render', 'rank', 'art_market', 'art_pwa', 'art_privacy', 'art_speed', 'art_tools', 'art_ie']],
+  q8: ['Quiz 8', ['basic', 'dynamic', 'simple', 'mounted', 'errchk', 'gpt', 'mbr', 'ntfs', 'cdfs', 'fat32', 'exfat', 'optimize', 'sspaces', 'diskmgmt', 'diskpart', 'onedrive', 'location', 'primary', 'syspart', 'msr', 'recovpart']],
+  q9: ['Quiz 9', ['navpane', 'cmdbar', 'addrbar', 'searchbar', 'details', 'quickacc', 'libraries', 'winfold', 'recycle', 'progfiles', 'searches', 'indexing', 'grep', 'metadata', 'boolean', 'defprof']],
+  q10: ['Quiz 10', ['accttypes', 'defacctfold', 'compmgmt', 'sid', 'uac', 'biosvc', 'hiddentmpl', 'appdata', 'kiosk', 'polp', 'pwbest', 'privperm']],
+  q11: ['Quiz 11', ['rdp', 'wpa', 'advshare', 'sharewiz', 'netdisc', 'netprof', 'ip4', 'wifisec', 'forget', 'netcmds', 'staticinfo', 'trouble8']],
+  q12: ['Quiz 12', ['malware', 'updtypes', 'wumenu', 'aslr', 'bitlocker', 'dep', 'elam', 'measured', 'uefi', 'smartscreen', 'tpm', 'hello', 'consent', 'creds']],
+  q13: ['Quiz 13', ['filerepo', 'inf', 'kmode', 'drvstore', 'devmgr', 'mmc', 'proptabs', 'verifier', 'bthist', 'pairing', 'rollback', 'signed']],
+  q14: ['Quiz 14', ['perf5', 'sysinfo', 'tmtabs', 'systeminfo', 'wmic', 'syspage', 'powermgmt', 'appinfo', 'svcwarn', 'tmdev']],
+};
+// Chapter each unit-exam-only item belongs to (quiz items already sit in their quiz's chapter)
+const UNIT_CH = {
+  pchc: 2, cortana: 1, parts4: 2, fexp: 3, upg3: 2, edge: [1, 7], minreq: 2, tmpfold: 2, peek: 3, snapshot: 2, taskview: 3, jumplist: 3, vdi: 2, vmadv: 2,
+  wu: 1, oem: 2, snap: 3, iso: 2, dualboot: 2, smode: 1, biosuefi: 2, accttypes: [2, 10],
+  affinity: 5, themes: 4, teamsdef: 6, cattlist: 6,
+  ssd: 8, osi: 7, dom: 7, cookie: 7,
+  permissions: 10, uacwarn: 12, featupd: 12, defaccts: 10, secintel: 12, troublestrat: 11, ipmanual: 11, uac: 10, compmgmt: 10, sid: 10, polp: 10
+};
+const CH_NAMES = { 1: 'Windows 11 at a glance', 2: 'Setup & installation', 3: 'Using Windows 11', 4: 'Personalization', 5: 'Apps & Task Manager', 6: 'Built-in apps',
+  7: 'Edge & the web', 8: 'Storage', 9: 'File Explorer', 10: 'User accounts', 11: 'Networking', 12: 'Security & privacy', 13: 'Hardware & drivers', 14: 'Performance & power' };
+const CH_NOTES = { 6: 'Four test questions cover Teams navigation and icons (from the class video), and at least two come from the assigned articles.' };
+COURSE.on = {};
+Object.entries(SHEETS).forEach(([k, [label, ids]]) => ids.forEach(id => (COURSE.on[id] = COURSE.on[id] || []).push(label)));
+Object.keys(CH_NAMES).forEach(n => {
+  n = +n;
+  const quiz = SHEETS['q' + n] ? SHEETS['q' + n][1] : [];
+  const unit = n <= 12 ? SHEETS['ue' + Math.ceil(n / 3)][1].filter(id => { const c = UNIT_CH[id]; return quiz.includes(id) ? false : Array.isArray(c) ? c.includes(n) : c === n; }) : [];
+  const unitNum = n <= 12 ? Math.ceil(n / 3) : 0;
+  COURSE.decks.push({ id: 'ch' + n, kind: 'chapter', num: n, title: 'Chapter ' + n, sub: CH_NAMES[n], unit: unitNum, terms: quiz.concat(unit),
+    tests: [quiz.length ? 'Quiz ' + n : null, unitNum ? 'Unit Exam ' + unitNum : null].filter(Boolean), note: CH_NOTES[n] });
+});
+// Any unit-exam item not placed in a chapter is a content bug; surface it in the console and tests.
+COURSE.unplaced = ['ue1', 'ue2', 'ue3', 'ue4'].flatMap(k => SHEETS[k][1]).filter(id => !COURSE.decks.some(d => d.kind === 'chapter' && d.terms.includes(id)));
+
+/* ---------- Linux unit (its own section) ---------- */
 const D = (id, kind, title, sub, unit, terms, extra) => COURSE.decks.push(Object.assign({ id, kind, title, sub, unit, terms }, extra || {}));
-D('ue1', 'unit', 'Unit Exam 1', 'Chapters 1-3', 1, ['pchc', 'cortana', 'parts4', 'fexp', 'upg3', 'edge', 'minreq', 'tmpfold', 'peek', 'snapshot', 'taskview', 'jumplist', 'vdi', 'vmadv', 'wu', 'oem', 'snap', 'iso', 'dualboot', 'smode', 'biosuefi', 'accttypes']);
-D('ue2', 'unit', 'Unit Exam 2', 'Chapters 4-6', 2, ['affinity', 'access', 'focus', 'sync', 'themes', 'fit', 'slideshow', 'spotlight', 'tmkey', 'autoplay', 'store3', 'tm', 'teamsdef', 'provapps', 'instapps', 'backcompat', 'startup', 'theme3p', 'dark', 'quickassist', 'uacwhy', 'cattlist', 'provcat']);
-D('ue3', 'unit', 'Unit Exam 3', 'Chapters 7-9', 3, ['syspart', 'basic', 'primary', 'optimize', 'diskmgmt', 'diskpart', 'gpt', 'mbr', 'dynamic', 'ntfs', 'errchk', 'sspaces', 'simple', 'ssd', 'details', 'quickacc', 'indexing', 'libraries', 'navpane', 'boolean', 'grep', 'osi', 'dom', 'cookie', 'edge']);
-D('ue4', 'unit', 'Unit Exam 4', 'Chapters 10-12', 4, ['permissions', 'tpm', 'compmgmt', 'uacwarn', 'wpa', 'wifisec', 'featupd', 'aslr', 'hello', 'uac', 'bitlocker', 'dep', 'ip4', 'defaccts', 'elam', 'sid', 'secintel', 'smartscreen', 'measured', 'troublestrat', 'polp', 'ipmanual']);
-D('q4', 'quiz', 'Quiz 4', 'Ch. 4 · Personalization', 2, ['persimp', 'sync', 'slideshow', 'spotlight', 'wallfold', 'theme3p', 'focus', 'access', 'dark', 'lock', 'fit']);
-D('q5', 'quiz', 'Quiz 5', 'Ch. 5 · Apps', 2, ['compat', 'apptypes', 'store3', 'uacwhy', 'tm', 'autoplay', 'backcompat', 'tmkey', 'startup']);
-D('q6', 'quiz', 'Quiz 6', 'Ch. 6 · Built-in apps', 2, ['sysapps', 'provapps', 'instapps', 'connexp', 'snip', 'provcat', 'quickassist', 'teamsnav', 'tv_teams', 'tv_meet', 'articles'], { note: 'Four test questions cover Teams navigation and icons (from the class video), and at least two come from the assigned articles.' });
-D('q7', 'quiz', 'Quiz 7', 'Ch. 7 · Edge & the web', 3, ['dns', 'tcp', 'udp', 'http', 'cookie', 'rtree', 'cssom', 'dom', 'compos', 'parsing', 'painting', 'osi', 'render', 'rank', 'art_market', 'art_pwa', 'art_privacy', 'art_speed', 'art_tools', 'art_ie']);
-D('q8', 'quiz', 'Quiz 8', 'Ch. 8 · Storage', 3, ['basic', 'dynamic', 'simple', 'mounted', 'errchk', 'gpt', 'mbr', 'ntfs', 'cdfs', 'fat32', 'exfat', 'optimize', 'sspaces', 'diskmgmt', 'diskpart', 'onedrive', 'location', 'primary', 'syspart', 'msr', 'recovpart']);
-D('q9', 'quiz', 'Quiz 9', 'Ch. 9 · File Explorer', 3, ['navpane', 'cmdbar', 'addrbar', 'searchbar', 'details', 'quickacc', 'libraries', 'winfold', 'recycle', 'progfiles', 'searches', 'indexing', 'grep', 'metadata', 'boolean', 'defprof']);
-D('q10', 'quiz', 'Quiz 10', 'Ch. 10 · Accounts', 4, ['accttypes', 'defacctfold', 'compmgmt', 'sid', 'uac', 'biosvc', 'hiddentmpl', 'appdata', 'kiosk', 'polp', 'pwbest', 'privperm']);
-D('q11', 'quiz', 'Quiz 11', 'Ch. 11 · Networking', 4, ['rdp', 'wpa', 'advshare', 'sharewiz', 'netdisc', 'netprof', 'ip4', 'wifisec', 'forget', 'netcmds', 'staticinfo', 'trouble8']);
-D('q12', 'quiz', 'Quiz 12', 'Ch. 12 · Security', 4, ['malware', 'updtypes', 'wumenu', 'aslr', 'bitlocker', 'dep', 'elam', 'measured', 'uefi', 'smartscreen', 'tpm', 'hello', 'consent', 'creds']);
-D('q13', 'quiz', 'Quiz 13', 'Ch. 13 · Hardware', 0, ['filerepo', 'inf', 'kmode', 'drvstore', 'devmgr', 'mmc', 'proptabs', 'verifier', 'bthist', 'pairing', 'rollback', 'signed']);
-D('q14', 'quiz', 'Quiz 14', 'Ch. 14 · Performance', 0, ['perf5', 'sysinfo', 'tmtabs', 'systeminfo', 'wmic', 'syspage', 'powermgmt', 'appinfo', 'svcwarn', 'tmdev']);
 D('lx1', 'linux', 'Linux Day 1', 'What is Linux?', 0, ['lx_kernel', 'lx_open', 'lx_benefit', 'lx_draw', 'lx_where', 'lx_distros', 'lx_why']);
 D('lx2', 'linux', 'Linux Day 2', 'Permissions & command line', 0, ['lx_perm', 'lx_rwx', 'lx_chmod', 'lx_chown', 'lx_chgrp', 'lx_etc', 'lx_case', 'cmd_whoami', 'cmd_nano', 'cmd_script', 'cmd_useradd', 'cmd_passwd', 'cmd_groupadd', 'cmd_usermod', 'cmd_id', 'cmd_userdel', 'cmd_groupdel', 'cmd_apt', 'cmd_less', 'cmd_ifconfig', 'cmd_ip_address', 'cmd_ping', 'cmd_traceroute', 'cmd_netstat'], { perms: true, note: 'Lab sheet fixes: /etc/passwd and /etc/group are files, so open them with cat, less or vim (cd won\'t work). Ctrl+C stops ping, q quits less; Ctrl+Z only pauses a program in the background. From the lab: chmod 567 = r-xrw-rwx, Aquaman (rwx/r-x/--x) = 751, Superman (all rwx) = 777.' });
 D('lx3', 'linux', 'Linux Day 3', 'Scripting', 0, ['lx_script', 'lx_shells', 'lx_shell', 'lx_shebang', 'lx_bash', 'lx_cli', 'lx_pipe', 'lx_redir', 'lx_var', 'lx_pos', 'lx_loops', 'lx_if', 'lx_func', 'lx_comment', 'lx_root', 'lx_distro', 'lx_env']);
