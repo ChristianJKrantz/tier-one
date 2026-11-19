@@ -442,3 +442,47 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
   .run-form label { width: 100%; }
 }
 @media (max-width: 420px) { .tiles { grid-template-columns: 1fr; } .st-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- NST 115 exam prep ---------- */
+.partc, .tile-ic.quiz, .cnav-ic.quiz { background: var(--p4); }
+.tile-ic.unit, .cnav-ic.unit { background: var(--accent); }
+.tile-ic.linux, .cnav-ic.linux { background: #3a8a3a; }
+.coursebanner { display: flex; align-items: center; gap: 14px; padding: 14px 18px; margin-bottom: 12px; border-radius: var(--r); text-decoration: none; color: var(--on-accent);
+  background: linear-gradient(110deg, var(--accent), var(--p3)); box-shadow: var(--shadow-s); }
+.coursebanner:hover { color: var(--on-accent); filter: brightness(1.06); }
+.coursebanner > .ic { width: 30px; height: 30px; }
+.coursebanner span { display: flex; flex-direction: column; line-height: 1.3; }
+.coursebanner small { opacity: .9; }
+.coursebanner .cb-go { margin-left: auto; flex-direction: row; align-items: center; gap: 6px; font-weight: 600; }
+.units { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+.unitcard { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.unitcard p { margin: 0; }
+.uc-top { display: flex; align-items: center; gap: 14px; }
+.uc-top > div { flex: 1; display: flex; flex-direction: column; line-height: 1.3; }
+.uc-top b { font-family: var(--display); font-size: 19px; }
+.uc-top small { color: var(--muted); }
+.uc-num { width: 46px; height: 46px; border-radius: 12px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-family: var(--display); font-size: 24px; font-weight: 700; }
+.uc-bar { height: 6px; border-radius: 3px; background: var(--sunk); overflow: hidden; }
+.uc-bar i { display: block; height: 100%; width: 0; background: var(--good); border-radius: 3px; transition: width .4s; }
+.item .ans { margin-bottom: 4px; }
+.item .reveal { display: none; }
+.recall .item:not(.shown) .ans { display: none; }
+.recall .item:not(.shown) .reveal { display: inline-flex; }
+.item .sec-foot { justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--stroke); padding-top: 10px; }
+.src { font-size: 12px; color: var(--muted); }
+.btn.mini { min-height: 28px; padding: 2px 10px; font-size: 13px; }
+.btn.mini .ic { width: 14px; height: 14px; }
+.btn.on-good { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.btn.on-bad { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); font-weight: 600; }
+.flash .back.prose p { font-size: 16px; font-family: var(--font); color: var(--text); margin: 6px 0; }
+.flash .back.prose ul { margin: 6px 0; padding-left: 20px; }
+.term { background: #0f1419; color: #d7e0ea; border-color: #26303a; padding: 18px 20px; font-family: var(--mono); max-width: 720px; }
+.term-task { font-family: var(--font); font-size: 17px; margin-bottom: 14px; color: #fff; }
+.term-task code, .term code { background: #1c2630; border-color: #33414f; color: #9fe39f; }
+.term code.big { font-size: 1.1em; padding: 2px 8px; }
+.term-line { display: flex; align-items: center; gap: 8px; }
+.prompt { color: #7fd17f; white-space: nowrap; font-weight: 700; }
+.term-line input { flex: 1; min-width: 0; background: transparent; border: 0; border-bottom: 1px solid #33414f; color: #fff; font-family: var(--mono); font-size: 16px; padding: 4px 2px; outline: none; caret-color: #7fd17f; }
+.term-out { min-height: 22px; margin-top: 10px; font-size: 14px; }
+.term-out .ok { color: #7fd17f; } .term-out .err { color: #ff8f85; } .term-out .hintline { color: #ffcf6b; }
+@media (max-width: 760px) { .units { grid-template-columns: 1fr; } .coursebanner .cb-go { display: none; } .prompt { font-size: 12px; } }

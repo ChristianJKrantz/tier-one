@@ -23,7 +23,7 @@
 
   /* ---------- saved progress ---------- */
   const KEY = 'tierone.v1';
-  const blank = () => ({ v: 1, xp: 0, streak: { day: '', n: 0 }, read: {}, cards: {}, drills: {}, practice: {}, belts: {}, missed: {}, rush: 0, theme: '' });
+  const blank = () => ({ v: 1, xp: 0, streak: { day: '', n: 0 }, read: {}, cards: {}, drills: {}, practice: {}, belts: {}, missed: {}, rush: 0, theme: '', course: { m: {}, best: {} } });
   let S = load();
   function load() {
     try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return Object.assign(blank(), s); } catch (e) { /* storage blocked */ }
@@ -97,7 +97,7 @@
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
   $('#startbtn').innerHTML = icon('start');
-  [['home', 'home'], ['review', 'review'], ['rush', 'rush'], ['progress', 'progress']].forEach(([k, ic]) => { const a = $(`[data-nav="${k}"]`); a.insertAdjacentHTML('afterbegin', icon(ic)); a.title = a.getAttribute('aria-label'); });
+  [['home', 'home'], ['course', 'course'], ['review', 'review'], ['rush', 'rush'], ['progress', 'progress']].forEach(([k, ic]) => { const a = $(`[data-nav="${k}"]`); a.insertAdjacentHTML('afterbegin', icon(ic)); a.title = a.getAttribute('aria-label'); });
   $('#startbtn').title = 'Start: all chapters (Ctrl+K)';
 
   function setTitle(text, ic) { $('#wintitle').textContent = text; $('#tbicon').innerHTML = icon(ic || 'logo'); document.title = text === 'Tier One' ? 'Tier One: Windows 11 help desk training' : `${text} · Tier One`; }
@@ -115,6 +115,7 @@
         if ((c.title + ' ' + c.short + ' ' + c.blurb).toLowerCase().includes(q)) hits.push({ c, label: `${c.num === 'A' || c.num === 'B' || c.num === 'C' ? 'Appendix' : 'Chapter'} ${c.num}: ${c.title}`, href: `#/c/${c.id}` });
         c.learn.forEach((s, i) => { if ((s.t + ' ' + s.p.join(' ') + ' ' + (s.key || []).join(' ')).toLowerCase().includes(q)) hits.push({ c, label: s.t, sub: `${c.num} · ${c.short}`, href: `#/c/${c.id}/learn/${i}` }); });
       });
+      COURSE.decks.forEach(d => d.terms.forEach(t => { const x = COURSE.terms[t]; if (!hits.some(h => h.href.endsWith('/' + t)) && (x.t + ' ' + x.d).toLowerCase().includes(q)) hits.push({ c: { part: 'c', icon: 'course' }, label: x.t, sub: `NST 115 · ${d.title}`, href: `#/course/${d.id}/sheet/${t}` }); }));
       body = `<h2 class="st-h">Best matches</h2>${hits.length ? `<ul class="st-res">${hits.slice(0, 12).map(h => `<li><a href="${h.href}"><span class="st-ic sm part${h.c.part}">${icon(h.c.icon)}</span><span><b>${esc(h.label)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : ''}</span></a></li>`).join('')}</ul>` : '<p class="muted st-none">No topics match. Try a tool name like "BitLocker" or "ipconfig".</p>'}`;
     }
     return body;
@@ -146,9 +147,10 @@
     else if (parts[0] === 'review') reviewView(parts[1] || 'cards');
     else if (parts[0] === 'rush') rushView();
     else if (parts[0] === 'progress') progressView();
+    else if (parts[0] === 'course') courseView(parts[1], parts[2], parts[3]);
     else homeView();
     renderTray();
-    if (!(parts[0] === 'c' && parts[3] !== undefined)) app.scrollTop = 0;
+    if (!((parts[0] === 'c' || parts[0] === 'course') && parts[3] !== undefined)) app.scrollTop = 0;
     app.focus({ preventScroll: true });
   }
   window.addEventListener('hashchange', route);
@@ -184,6 +186,7 @@
           <div class="statrow"><span><b>${S.xp.toLocaleString()}</b><small>XP</small></span><span><b>${streakNow()}</b><small>day streak</small></span><span><b>${r.n}/${CH.length}</b><small>certified</small></span></div>
         </div>
       </section>
+      <a class="coursebanner" href="#/course">${icon('course')}<span><b>NST 115 exam prep</b><small>Unit exam and quiz reviews, Linux unit, terminal and permissions drills</small></span><span class="cb-go">Open ${icon('arrow')}</span></a>
       <section class="today" aria-label="Today">
         <a class="todo" href="#/review/cards">${icon('cards')}<span><b>${due ? plural(due, 'card') + ' due' : 'No cards due'}</b><small>${due ? 'Spaced review keeps it in long-term memory' : 'Cards join your review once you start a lesson'}</small></span></a>
         <a class="todo" href="#/review/reopened">${icon('ticket')}<span><b>${missed ? plural(missed, 'reopened ticket') : 'No reopened tickets'}</b><small>Anything you miss reopens here until you solve it first try</small></span></a>
@@ -535,6 +538,194 @@
     $('#exp').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' })); a.download = `tier-one-progress-${dayStr()}.json`; document.body.appendChild(a); a.click(); a.remove(); };
     $('#imp').onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { const d = JSON.parse(t); if (!d || d.v !== 1) throw new Error('bad'); S = Object.assign(blank(), d); save(); applyTheme(); progressView(); renderTray(); toast('Progress imported'); }).catch(() => { $('#datamsg').textContent = 'That file isn\'t a Tier One progress export.'; }); };
     $('#reset').onclick = e => { const b = e.currentTarget; if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Click again to erase all progress'; return; } const theme = S.theme; S = blank(); S.theme = theme; save(); progressView(); renderTray(); toast('Progress reset'); };
+  }
+
+  /* ---------- NST 115 exam prep (separate tab) ---------- */
+  // Review sheets keep study answers visible (they are the lesson); the practice exam, terminal and
+  // permissions drills follow the site rule: a wrong pick says what that pick really is, never which one is right.
+  const CO = COURSE;
+  const cS = () => (S.course = S.course || { m: {}, best: {} });
+  const mastered = id => (cS().m[id] || 0) >= 2;
+  const deckPct = d => Math.round(d.terms.filter(mastered).length / d.terms.length * 100);
+  const srcTag = s => s === 'class' ? 'Class materials' : s === 'gen' ? 'General knowledge: check your notes' : `Book ch. ${s.slice(1)}`;
+  const deckById = id => CO.decks.find(d => d.id === id);
+  const DMODES = [['sheet', 'Review sheet', 'learn'], ['flash', 'Flash review', 'cards'], ['exam', 'Practice exam', 'ticket']];
+  function courseView(id, mode, arg) {
+    if (id === 'terminal') return terminalView();
+    if (id === 'perms') return permsView();
+    const d = deckById(id);
+    if (!d) return courseHome();
+    if (!DMODES.some(m => m[0] === mode)) mode = 'sheet';
+    setTitle(`NST 115 · ${d.title}`, 'course');
+    const best = cS().best[d.id];
+    app.innerHTML = `<div class="chap">
+      <nav class="cnav" aria-label="Review sections">
+        <div class="cnav-head"><span class="cnav-ic ${d.kind}">${icon(d.kind === 'linux' ? 'penguin' : d.kind === 'unit' ? 'cert' : 'ticket')}</span><div><small>${d.kind === 'unit' ? 'Unit exam review' : d.kind === 'quiz' ? 'Quiz review' : 'Linux unit'}</small><b>${esc(d.title)}: ${esc(d.sub)}</b></div></div>
+        <ul class="modes">${DMODES.map(m => `<li><a href="#/course/${d.id}/${m[0]}" class="${m[0] === mode ? 'on' : ''}" ${m[0] === mode ? 'aria-current="page"' : ''}>${icon(m[2])}<span>${m[1]}</span><em>${m[0] === 'sheet' ? `${deckPct(d)}%` : m[0] === 'exam' && best !== undefined ? `best ${best}%` : ''}</em></a></li>`).join('')}
+          ${d.perms ? `<li><a href="#/course/perms">${icon('lock')}<span>Permissions trainer</span></a></li>` : ''}${d.kind === 'linux' ? `<li><a href="#/course/terminal">${icon('term')}<span>Terminal drills</span></a></li>` : ''}</ul>
+        ${mode === 'sheet' ? `<ol class="secs">${d.terms.map(t => `<li><a href="#/course/${d.id}/sheet/${t}" class="${mastered(t) ? 'done' : ''}">${esc(CO.terms[t].t)}</a></li>`).join('')}</ol>` : ''}
+        <div class="cnav-foot"><a href="#/course">${icon('back')}All reviews</a></div>
+      </nav><div class="cbody" id="cbody"></div></div>`;
+    const body = $('#cbody');
+    ({ sheet: sheetMode, flash: flashMode, exam: cExamMode })[mode](d, body, arg);
+  }
+  function courseHome() {
+    setTitle('NST 115 exam prep', 'course');
+    const card = d => { const p = deckPct(d), b = cS().best[d.id]; return `<a class="tile deck ${d.kind}" href="#/course/${d.id}"><span class="tile-ic ${d.kind}">${icon(d.kind === 'linux' ? 'penguin' : d.kind === 'unit' ? 'cert' : 'ticket')}</span><span class="tile-txt"><small>${esc(d.sub)}</small><b>${esc(d.title)}</b><small>${d.terms.length} items${b !== undefined ? ` · exam best ${b}%` : ''}</small></span>${ring(p, `${d.title}: ${p}% of items mastered`)}</a>`; };
+    const units = CO.decks.filter(d => d.kind === 'unit');
+    app.innerHTML = `<div class="pad">
+      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep</h2><p class="muted">Every item from your instructor's review sheets, answered from the textbook and your class materials. Start with the unit exams. Each review has a <b>review sheet</b> (answers you can cover and test yourself on), <b>flash review</b>, and a <b>practice exam</b> that never gives the answer away.</p></div>
+      <h3 class="part-h">Unit exams</h3>
+      <div class="units">${units.map(d => { const p = deckPct(d), b = cS().best[d.id], qs = CO.decks.filter(q => q.kind === 'quiz' && q.unit === d.unit); return `<div class="unitcard card"><div class="uc-top"><span class="uc-num">${d.unit}</span><div><b>${esc(d.title)}</b><small>${esc(d.sub)} · ${d.terms.length} items</small></div>${ring(p, `${p}% mastered`)}</div>
+        <div class="uc-bar"><i style-w="${p}"></i></div>
+        <p class="muted small">${b !== undefined ? `Practice exam best: <b>${b}%</b>` : 'Practice exam not taken yet'}${qs.length ? ` · related quizzes: ${qs.map(q => `<a href="#/course/${q.id}">${esc(q.title.replace('Quiz ', 'Q'))}</a>`).join(', ')}` : ''}</p>
+        <div class="row"><a class="btn" href="#/course/${d.id}/sheet">${icon('learn')}Review sheet</a><a class="btn primary" href="#/course/${d.id}/exam">${icon('ticket')}Practice exam</a></div></div>`; }).join('')}</div>
+      <h3 class="part-h">Quiz reviews</h3><div class="tiles">${CO.decks.filter(d => d.kind === 'quiz').map(card).join('')}</div>
+      <h3 class="part-h">Linux unit</h3><div class="tiles">${CO.decks.filter(d => d.kind === 'linux').map(card).join('')}
+        <a class="tile deck" href="#/course/terminal"><span class="tile-ic linux">${icon('term')}</span><span class="tile-txt"><small>Type real commands</small><b>Terminal drills</b><small>${CO.terminal.length} tasks</small></span></a>
+        <a class="tile deck" href="#/course/perms"><span class="tile-ic linux">${icon('lock')}</span><span class="tile-txt"><small>rwx ⇄ 755</small><b>Permissions trainer</b><small>Endless practice</small></span></a></div>
+      <p class="fine">Answers tagged <b>Book ch.</b> come from <i>Windows 11 Inside Out</i>; <b>Class materials</b> from your slides and handouts; <b>General knowledge</b> items aren't covered in either, so compare them with your notes. Progress is saved in this browser.</p></div>`;
+    $$('.uc-bar i').forEach(i => i.style.width = i.getAttribute('style-w') + '%');
+  }
+  function sheetMode(d, body, arg) {
+    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>${esc(d.title)} review sheet</h2><p class="muted">Items in your instructor's order. Turn on <b>Recall mode</b> to hide the answers, say each one from memory, reveal, then mark it.</p></div>
+      ${d.note ? `<div class="think">${icon('bulb')}<p><b>Heads up:</b> ${esc(d.note)}</p></div>` : ''}
+      <div class="recall-bar"><label class="switch"><input type="checkbox" id="recall"><span></span>Recall mode</label><small class="muted">${d.terms.filter(mastered).length}/${d.terms.length} marked "Got it"</small></div>
+      ${d.terms.map((id, i) => { const t = CO.terms[id]; return `<article class="sec card item" id="t-${id}" tabindex="-1"><h2><span class="secnum">${i + 1}</span>${esc(t.t)}</h2><div class="ans prose">${paras(t.a)}</div><button type="button" class="reveal btn ghost" data-act="show">${icon('eye')}Show answer</button><div class="sec-foot"><span class="src">${esc(srcTag(t.s))}</span><span class="row"><button class="btn mini ${(cS().m[id] || 0) === 1 ? 'on-bad' : ''}" type="button" data-act="mark" data-id="${id}" data-v="1">Again</button><button class="btn mini ${mastered(id) ? 'on-good' : ''}" type="button" data-act="mark" data-id="${id}" data-v="2">${icon('check')}Got it</button></span></div></article>`; }).join('')}
+      <div class="nextbar"><a class="btn primary" href="#/course/${d.id}/exam">${icon('ticket')}Take the practice exam</a></div></div>`;
+    const rc = $('#recall');
+    rc.addEventListener('change', () => { body.classList.toggle('recall', rc.checked); $$('.item', body).forEach(x => x.classList.remove('shown')); });
+    body.onclick = e => {
+      const b = e.target.closest('[data-act]'); if (!b) return;
+      if (b.dataset.act === 'show') b.closest('.item').classList.add('shown');
+      if (b.dataset.act === 'mark') {
+        const id = b.dataset.id, v = +b.dataset.v, was = mastered(id); cS().m[id] = v; save();
+        b.parentNode.querySelectorAll('button').forEach(x => x.classList.remove('on-good', 'on-bad')); b.classList.add(v === 2 ? 'on-good' : 'on-bad');
+        if (v === 2 && !was) addXP(2); else renderTray();
+        $$(`.secs a[href$="/${id}"]`).forEach(a => a.classList.toggle('done', v === 2));
+        $('.recall-bar small', body).textContent = `${d.terms.filter(mastered).length}/${d.terms.length} marked "Got it"`;
+      }
+    };
+    body.classList.remove('recall');
+    if (arg) { const t = $(`#t-${arg}`); if (t) { t.scrollIntoView({ block: 'start' }); t.focus({ preventScroll: true }); } }
+  }
+  function flashMode(d, body) {
+    let q = shuffle(d.terms.filter(t => !mastered(t))); if (!q.length) q = shuffle(d.terms);
+    let flipped = false, n = 0;
+    const draw = () => {
+      if (!q.length) { body.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>Round done: ${n} reviewed</h3><p class="muted">${d.terms.filter(mastered).length}/${d.terms.length} items marked "Got it".</p><div class="row"><a class="btn" href="#/course/${d.id}/flash" data-act="again">Go again</a><a class="btn primary" href="#/course/${d.id}/exam">${icon('ticket')}Practice exam</a></div></div></div>`; return; }
+      const t = CO.terms[q[0]]; flipped = false;
+      body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Flash review</h2><p class="muted">${plural(q.length, 'item')} left. Explain it out loud, then flip.</p></div>
+        <div class="flash" id="flash"><div class="face front"><small>Review item</small><p>${esc(t.t)}</p></div><div class="face back prose" hidden><small>Answer</small>${paras(t.a)}</div></div>
+        <div class="flash-act" id="fact"><button class="btn primary" type="button" data-act="flip">${icon('eye')}Flip <kbd>Space</kbd></button></div></div>`;
+    };
+    const flip = () => { if (flipped || !q.length) return; flipped = true; $('.face.back', body).hidden = false; $('#flash', body).classList.add('flipped'); $('#fact', body).innerHTML = `<div class="rate"><button class="btn bad" type="button" data-act="r" data-v="1">Again <kbd>1</kbd></button><button class="btn good" type="button" data-act="r" data-v="2">Got it <kbd>2</kbd></button></div>`; };
+    const rate = v => { if (!flipped) return; const id = q.shift(); const was = mastered(id); cS().m[id] = v; if (v === 1) q.splice(Math.min(3, q.length), 0, id); n++; save(); if (v === 2 && !was) addXP(2); draw(); };
+    body.onclick = e => { const b = e.target.closest('[data-act]'); if (!b) { if (e.target.closest('#flash')) flip(); return; } if (b.dataset.act === 'flip') flip(); if (b.dataset.act === 'r') rate(+b.dataset.v); if (b.dataset.act === 'again') { e.preventDefault(); route(); } };
+    view = { key: e => { if (e.key === ' ' && !flipped) { e.preventDefault(); flip(); } else if (flipped && (e.key === '1' || e.key === '2')) rate(+e.key); } };
+    draw();
+  }
+  function cExamMode(d, body) {
+    const pool = d.terms.length >= 4 ? d.terms : CO.decks.filter(x => x.unit === d.unit).flatMap(x => x.terms);
+    const total = Math.min(d.terms.length, d.kind === 'unit' ? 25 : 15);
+    const intro = () => { body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Practice exam</h2></div><div class="card belt-intro">${seal((cS().best[d.id] || 0) >= 80)}<div><p><b>${total} questions</b> drawn from the ${esc(d.title)} review sheet. Some show a definition and ask for the item, others ask what an item means.</p><p class="muted">A wrong pick tells you what that choice actually is, so you can try again. Only first-try answers count toward your score.${cS().best[d.id] !== undefined ? ` Best so far: ${cS().best[d.id]}%.` : ''}</p><button class="btn primary" type="button" id="cgo">${icon('ticket')}Start</button></div></div></div>`; $('#cgo').onclick = start; };
+    function start() {
+      const qs = shuffle(d.terms).slice(0, total).map(id => {
+        const others = shuffle(Array.from(new Set(pool)).filter(x => x !== id && CO.terms[x].d !== CO.terms[id].d)).slice(0, 3);
+        const long = CO.terms[id].t.length > 55;
+        return { id, rev: !long && Math.random() < .5, opts: shuffle([id, ...others]) };
+      });
+      let pos = 0, wrong = 0, firstRight = 0; const missed = [];
+      const draw = () => {
+        if (pos >= qs.length) return finish();
+        const q = qs[pos], t = CO.terms[q.id]; wrong = 0;
+        body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Practice exam</h2><p class="muted">${pos + 1} of ${qs.length}</p></div><div class="dots">${qs.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>
+          <div class="ticket card"><div class="tk-head"><span class="tk-tag plain">${q.rev ? 'What does this mean?' : 'Which review item is this?'}</span></div>
+          <h3 class="tk-q">${q.rev ? esc(t.t) : esc(t.d)}</h3>
+          <div class="opts">${q.opts.map((o, k) => `<button type="button" class="opt" data-act="pick" data-o="${o}"><kbd>${k + 1}</kbd><span>${esc(q.rev ? CO.terms[o].d : CO.terms[o].t)}</span></button>`).join('')}</div>
+          <div class="fb" id="tkfb" aria-live="polite"></div><div class="row tk-row"></div></div></div>`;
+        view = { key: e => { const b = $$('.opt', body)[+e.key - 1]; if (b && !b.disabled) b.click(); } };
+      };
+      body.onclick = e => {
+        const b = e.target.closest('[data-act]'); if (!b) return;
+        if (b.dataset.act === 'next') { pos++; draw(); return; }
+        if (b.dataset.act !== 'pick' || b.disabled) return;
+        const q = qs[pos], o = b.dataset.o;
+        if (o === q.id) {
+          b.classList.add('right'); $$('.opt', body).forEach(x => { x.disabled = true; });
+          if (!wrong) firstRight++; else missed.push(q.id);
+          $('#tkfb', body).innerHTML = `<div class="good-fb">${icon('check')}<p><b>Correct.</b> ${wrong ? 'You got there.' : 'First try.'}</p></div>`;
+          $('.tk-row', body).innerHTML = `<button class="btn primary" type="button" data-act="next">Next ${icon('arrow')}</button>`; $('[data-act="next"]', body).focus();
+        } else {
+          wrong++; b.classList.add('wrong'); b.disabled = true; const p = CO.terms[o];
+          $('#tkfb', body).innerHTML = `<div class="bad-fb">${icon('x')}<p><b>Not this one.</b> ${q.rev ? `That describes <b>${esc(p.t)}</b>.` : `<b>${esc(p.t)}</b> means: ${esc(p.d)}`}</p></div>`;
+        }
+      };
+      const finish = () => {
+        view = null; const score = Math.round(firstRight / qs.length * 100), prev = cS().best[d.id];
+        cS().best[d.id] = Math.max(prev || 0, score); save(); addXP(Math.round(score / 10) + (prev === undefined || score > prev ? 5 : 0), score > (prev || 0) ? 'new best' : '');
+        body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Results</h2></div><div class="card result ${score >= 80 ? 'pass' : 'fail'}">${seal(score >= 80, score >= 80 ? 'stampin' : '')}<div><p class="score">${score}%</p><p><b>${score >= 80 ? 'Exam-ready on this review.' : 'Keep studying, you\'re getting there.'}</b></p><p class="muted">${firstRight} of ${qs.length} right on the first try.</p></div></div>
+          ${missed.length ? `<div class="card missed"><h3>Restudy these</h3><ul>${missed.map(id => `<li><a href="#/course/${d.id}/sheet/${id}">${icon('learn')}${esc(CO.terms[id].t)}</a></li>`).join('')}</ul></div>` : ''}
+          <div class="row"><button class="btn" type="button" id="cagain">Retake</button><a class="btn primary" href="#/course">All reviews</a></div></div>`;
+        $('#cagain').onclick = start;
+      };
+      draw();
+    }
+    intro();
+  }
+  function terminalView() {
+    setTitle('NST 115 · Terminal drills', 'term');
+    const items = CO.terminal; let order = shuffle(items.map((_, i) => i)), pos = 0, hints = 0, wrong = 0, solved = 0;
+    const nrm = s => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').replace(/\s*\|\s*/g, ' | ').trim();
+    const draw = () => {
+      if (pos >= order.length) { app.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>${solved}/${items.length} solved</h3><p class="muted">Run through them again until every one is automatic.</p><div class="row"><a class="btn primary" href="#/course/terminal" id="tagain">Again</a><a class="btn" href="#/course">All reviews</a></div></div></div>`; $('#tagain').onclick = e => { e.preventDefault(); terminalView(); }; return; }
+      const r = items[order[pos]]; hints = 0; wrong = 0;
+      app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Terminal drills</h2><p class="muted">Type the Linux command. <b>Case matters</b>, just like in a real terminal. Hints narrow it down; no answers given.</p></div><div class="dots">${order.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>
+        <div class="term card"><div class="term-task">${esc(r[0])}</div><form class="term-line" id="tform" autocomplete="off"><label for="tin" class="prompt">student@ubuntu:~$</label><input id="tin" type="text" spellcheck="false" autocapitalize="off" autocorrect="off"></form><div class="term-out" id="tout" aria-live="polite"></div></div>
+        <div class="row run-row"><button class="btn" type="button" id="thint">${icon('bulb')}Hint</button><button class="btn ghost" type="button" id="tskip">Skip for now</button></div></div>`;
+      const inp = $('#tin'); inp.focus();
+      $('#tform').onsubmit = e => {
+        e.preventDefault(); const v = nrm(inp.value); if (!v) return;
+        if (r[1].map(nrm).includes(v)) {
+          solved++; inp.readOnly = true; $('#tout').innerHTML = `<span class="ok">✓ Correct${!wrong && !hints ? ', first try' : ''}.</span>`;
+          $('.run-row').innerHTML = `<button class="btn primary" type="button" id="tnext">Next ${icon('arrow')}</button>`; $('#tnext').onclick = () => { pos++; draw(); }; $('#tnext').focus();
+          addXP(!wrong && !hints ? 5 : 2);
+        } else {
+          wrong++; const cmd = v.split(' ')[0];
+          $('#tout').innerHTML = `<span class="err">${r[1].some(a => nrm(a).split(' ')[0] === cmd) ? 'Right command, but the options or arguments are off.' : r[1].some(a => nrm(a).split(' ')[0].toLowerCase() === cmd.toLowerCase()) ? `${esc(cmd)}: command not found (check the capitals)` : `${esc(cmd)}: not the command you need here`}</span>`;
+          inp.select();
+        }
+      };
+      $('#thint').onclick = () => { hints = Math.min(2, hints + 1); $('#tout').innerHTML = `<span class="hintline">Hint ${hints}: ${esc(r[1 + hints])}</span>`; if (hints === 2) $('#thint').disabled = true; inp.focus(); };
+      $('#tskip').onclick = () => { order.push(order.splice(pos, 1)[0]); draw(); };
+    };
+    draw();
+  }
+  function permsView() {
+    setTitle('NST 115 · Permissions trainer', 'lock');
+    const sym = n => ['r', 'w', 'x'].map((c, i) => (n & (4 >> i)) ? c : '-').join('');
+    let streak = 0, hints = 0;
+    const draw = () => {
+      const oct = [0, 1, 2].map(() => [7, 6, 5, 4, 0, 1, 3, 2][Math.floor(Math.random() * (Math.random() < .7 ? 4 : 8))]);
+      const toOct = Math.random() < .5, str = oct.map(sym).join(''), ans = toOct ? oct.join('') : str; hints = 0;
+      app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Permissions trainer</h2><p class="muted">Convert between <code>ls -l</code> permission strings and <code>chmod</code> numbers. <b>r = 4, w = 2, x = 1</b>, added up for user, group and others. Streak: <b>${streak}</b></p></div>
+        <div class="term card"><div class="term-task">${toOct ? `What number gives <code class="big">-${str}</code> ?` : `What does <code class="big">chmod ${oct.join('')}</code> look like in <code>ls -l</code>? (9 characters, skip the type)`}</div>
+        <form class="term-line" id="pform" autocomplete="off"><label for="pin" class="prompt">${toOct ? 'chmod' : '-'}</label><input id="pin" type="text" spellcheck="false" autocapitalize="off" maxlength="${toOct ? 3 : 10}"></form><div class="term-out" id="pout" aria-live="polite"></div></div>
+        <div class="row run-row"><button class="btn" type="button" id="phint">${icon('bulb')}Hint</button><button class="btn ghost" type="button" id="pnew">New one</button></div></div>`;
+      const inp = $('#pin'); inp.focus();
+      $('#pform').onsubmit = e => {
+        e.preventDefault(); let v = inp.value.trim(); if (!toOct && v.length === 10) v = v.slice(1); if (!v) return;
+        if (v === ans) { streak++; addXP(hints ? 1 : 3); $('#pout').innerHTML = '<span class="ok">✓ Correct.</span>'; setTimeout(draw, 700); }
+        else {
+          streak = 0; const parts = toOct ? v.split('') : [v.slice(0, 3), v.slice(3, 6), v.slice(6, 9)], who = ['user', 'group', 'others'];
+          const bad = who.filter((_, i) => (toOct ? +parts[i] !== oct[i] : parts[i] !== sym(oct[i])));
+          $('#pout').innerHTML = `<span class="err">Not quite: check the <b>${bad.join(', ') || 'format'}</b> part${bad.length > 1 ? 's' : ''}.</span>`; inp.select();
+        }
+      };
+      $('#phint').onclick = () => { hints++; const i = Math.min(hints, 3) - 1; $('#pout').innerHTML = `<span class="hintline">${hints <= 3 ? `The ${['user', 'group', 'others'][i]} part is ${toOct ? `<code>${sym(oct[i])}</code>: add up r = 4, w = 2, x = 1` : `${oct[i]}: which of 4, 2 and 1 add up to it?`}` : 'That\'s every hint. Work it out one part at a time.'}</span>`; inp.focus(); };
+      $('#pnew').onclick = () => { streak = 0; draw(); };
+    };
+    draw();
   }
 
   /* ---------- global wiring ---------- */

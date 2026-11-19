@@ -45,6 +45,14 @@ Every study mode follows one rule: **the site never shows you the right answer.*
 
 <img src="docs/run.png" alt="Run drill dialog after two hints: 'The switch is a three-letter word meaning everything'" width="720">
 
+### NST 115 exam prep tab
+A separate tab (graduation-cap icon on the taskbar) built from the NST 115 review sheets and Linux unit materials, with the **unit exams up front**:
+- **Unit Exams 1-4** and **Quizzes 4-14**: every review-sheet item in the instructor's order, answered from the textbook and class materials, and tagged with its source (book chapter, class materials, or general knowledge to check against notes)
+- **Review sheet** with Recall mode (answers hidden until you've said them), **Flash review**, and a **Practice exam** that tells you what a wrong pick actually is but never reveals the right one
+- **Linux unit**: Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers)
+
+<img src="docs/course.png" alt="NST 115 exam prep: four unit exam cards, then quiz reviews" width="720">
+
 ### Review, Run Rush and progress
 - **Review** collects due flashcards from every chapter, plus **Reopened tickets**: every question you've missed reopens until you solve it on the first try.
 - **Run Rush** gives you 60 seconds to type as many commands as you can from the whole course. Commands you skip become a list of chapters to drill, not a list of answers.
@@ -81,6 +89,7 @@ python3 tests/serve.py        # http://127.0.0.1:8765
 ### Tests
 
 ```bash
+node tests/test_course.js     # every review-sheet item is complete; definitions don't give away exam answers
 node tests/test_content.js    # every question has a valid answer, a reason for each wrong option and a hint;
                               # no hint or reason gives the answer away
 python3 tests/test_ui.py      # headless Chromium walk-through of every mode, phone layout, dark mode,
@@ -94,6 +103,7 @@ index.html            app shell: window, taskbar, Start menu
 css/style.css         all styles (light and dark, system fonts only)
 js/data.js            content loader and validation
 js/content-1..3.js    chapter content: Part I, Part II, Parts III-IV
+js/course.js          NST 115 exam prep: review-sheet answers, decks, terminal drills
 js/icons.js           line icons
 js/app.js             routing, progress, and every study mode
 sw.js                 offline cache
