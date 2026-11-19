@@ -47,7 +47,7 @@ Every study mode follows one rule: **the site never shows you the right answer.*
 
 ### NST 115 exam prep tab
 A separate tab (graduation-cap icon on the taskbar) built from the NST 115 review sheets, **organized by chapter only**:
-- **Chapters 1-14**: each chapter combines its quiz review and its part of the unit exam review. Every item is answered from the textbook and class materials, with badges showing which test it's on (**Quiz 8**, **Unit Exam 3**) and a source tag (book chapter, class materials, or general knowledge to check against notes)
+- **Chapters 1-14**: each chapter combines its quiz review (Quizzes 1-14) and its part of the unit exam review (Unit Exams 1-4). Every item is answered from the textbook and class materials, with badges showing which test it's on (**Quiz 8**, **Unit Exam 3**) and a source tag (book chapter, class materials, or general knowledge to check against notes)
 - **Review sheet** with Recall mode (answers hidden until you've said them), **Flash review**, and a **Practice exam** that tells you what a wrong pick actually is but never reveals the right one
 
 ### Linux tab
