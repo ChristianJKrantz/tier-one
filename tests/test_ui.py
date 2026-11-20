@@ -192,6 +192,16 @@ with sync_playwright() as p:
     check(page.locator('.rankcard .idbadge').count() == 1 and 'Trainee' in page.inner_text('.rankcard'), 'home shows the technician ID badge')
     check('belt' not in page.inner_text('body').lower(), 'no leftover belt wording on the home page')
 
+    # Main site covers everything: every Exam prep / Linux item appears in a main-site chapter lesson
+    missing = page.evaluate("""() => { const have = new Set(); W.chapters.forEach(c => c.learn.forEach(l => l.p.forEach(x => { if (x.startsWith('### ')) have.add(x.slice(4)); })));
+      return COURSE.decks.flatMap(d => d.terms).map(id => COURSE.terms[id].t).filter(t => !have.has(t)); }""")
+    check(not missing, f'main site covers every review-sheet and Linux item {missing[:3]}')
+    check(page.evaluate("COURSE.decks.filter(d => d.kind === 'chapter').every(d => d.terms.every(id => (COURSE.on[id] || []).length))"), 'exam prep holds only review-sheet items')
+    page.goto(URL + '#/c/c8/learn/6')
+    page.wait_for_selector('.sec h3.sub')
+    page.wait_for_timeout(400)
+    shot(page, 'lesson-review.png')
+
     # NST 115 exam prep tab: chapters only; Linux is its own tab
     page.goto(URL + '#/course')
     page.wait_for_selector('.chtiles .tile')

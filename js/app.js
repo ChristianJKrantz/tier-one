@@ -13,10 +13,31 @@
   const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
   const CH = W.chapters;
 
+  // The main site covers everything, including the class review-sheet material: each book chapter gets its
+  // Exam prep items (quiz + unit exam topics) as extra lessons and flashcards, and Chapter 18 gets the Linux unit.
+  (function mergeCourse() {
+    if (typeof COURSE === 'undefined') return;
+    const add = (c, title, ids, lead) => {
+      const terms = ids.map(id => COURSE.terms[id]).filter(Boolean);
+      if (!terms.length) return;
+      const p = [lead];
+      terms.forEach(t => { p.push('### ' + t.t); t.a.forEach(x => p.push(x)); });
+      c.learn.push({ t: title, p, key: terms.map(t => `**${t.t}:** ${t.d}`), course: true });
+      const fronts = new Set(c.cards.map(x => x[0].toLowerCase()));
+      terms.forEach(t => { if (!fronts.has(t.t.toLowerCase())) c.cards.push([t.t, t.d]); });
+    };
+    COURSE.decks.filter(d => d.kind === 'chapter').forEach(d => {
+      const c = W.byId('c' + d.num); if (!c) return;
+      add(c, `Class review topics (${d.tests.join(' + ')})`, d.terms, `Everything on the NST 115 review sheets for this chapter. Practice it in the Exam prep tab.`);
+    });
+    const c18 = W.byId('c18');
+    if (c18) COURSE.decks.filter(d => d.kind === 'linux').forEach(d => add(c18, `Linux unit: ${d.title} (${d.sub})`, d.terms, d.note || `From the NST 115 Linux unit. Drill it in the Linux tab.`));
+  })();
+
   function paras(list) {
     let out = '', ul = [];
     const flush = () => { if (ul.length) { out += `<ul>${ul.map(li => `<li>${md(li)}</li>`).join('')}</ul>`; ul = []; } };
-    list.forEach(p => { if (p.startsWith('- ')) ul.push(p.slice(2)); else { flush(); out += `<p>${md(p)}</p>`; } });
+    list.forEach(p => { if (p.startsWith('- ')) ul.push(p.slice(2)); else if (p.startsWith('### ')) { flush(); out += `<h3 class="sub">${md(p.slice(4))}</h3>`; } else { flush(); out += `<p>${md(p)}</p>`; } });
     flush();
     return out;
   }
