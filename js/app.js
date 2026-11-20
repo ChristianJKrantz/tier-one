@@ -598,23 +598,27 @@
     setTitle('NST 115 exam prep', 'course');
     const units = [1, 2, 3, 4];
     app.innerHTML = `<div class="pad">
-      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep by chapter</h2><p class="muted">Each chapter combines everything from its <b>quiz review</b> and its part of the <b>unit exam review</b>, answered from the textbook and your class materials. Badges show which test each item is on. Linux has <a href="#/linux">its own tab</a>.</p></div>
+      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep by chapter</h2><p class="muted">Each chapter combines everything from its <b>quiz review</b> and its part of the <b>unit exam review</b>, answered from the textbook and your class materials. Badges show which test each item is on. The <a href="#linux-unit">Linux unit</a> is at the bottom, kept separate from the Windows chapters.</p></div>
       ${units.map(u => { const ds = CO.decks.filter(d => d.kind === 'chapter' && d.unit === u); return `<h3 class="part-h">Chapters ${ds[0].num}-${ds[ds.length - 1].num} <span class="muted">· Unit Exam ${u}</span></h3><div class="tiles chtiles">${ds.map(chTile).join('')}</div>`; }).join('')}
       <h3 class="part-h">Chapters 13-14</h3><div class="tiles chtiles">${CO.decks.filter(d => d.kind === 'chapter' && !d.unit).map(chTile).join('')}</div>
+      <h3 class="part-h linux-h" id="linux-unit">${icon('penguin')}Linux unit <span class="muted">· also on the exam</span></h3><div class="tiles linuxtiles">${linuxTiles()}</div>
       <p class="fine">Answers tagged <b>Book ch.</b> come from <i>Windows 11 Inside Out</i>; <b>Class materials</b> from your slides, handouts, the assigned article and video; <b>General knowledge</b> items aren't covered in either, so compare them with your notes. Progress is saved in this browser.</p></div>`;
   }
+  app.addEventListener('click', e => { const a = e.target.closest('a[href="#linux-unit"]'); if (a) { e.preventDefault(); const h = $('#linux-unit'); if (h) h.scrollIntoView({ block: 'start', behavior: 'smooth' }); } });
   function chTile(d) {
     const p = deckPct(d), b = cS().best[d.id];
     return `<a class="tile deck" href="#/course/${d.id}"><span class="tile-ic chapter"><span class="cnum">${d.num}</span></span><span class="tile-txt"><small>Chapter ${d.num} · ${d.terms.length} items</small><b>${esc(d.sub)}</b><span class="tchips">${(d.tests || []).map(t => `<span class="onchip ${/Unit/.test(t) ? 'unit' : /slides/.test(t) ? 'slides' : ''}">${esc(t)}</span>`).join('')}</span>${b !== undefined ? `<small>Practice exam best ${b}%</small>` : ''}</span>${ring(p, `${d.sub}: ${p}% of items mastered`)}</a>`;
   }
+  function linuxTile(d) { const p = deckPct(d); return `<a class="tile deck" href="#/linux/${d.id}"><span class="tile-ic linux">${icon('penguin')}</span><span class="tile-txt"><small>${esc(d.sub)}</small><b>${esc(d.title)}</b><small>${d.terms.length} items${cS().best[d.id] !== undefined ? ` · exam best ${cS().best[d.id]}%` : ''}</small></span>${ring(p, `${d.title}: ${p}% mastered`)}</a>`; }
+  function linuxTiles() {
+    return CO.decks.filter(d => d.kind === 'linux').map(linuxTile).join('') + `
+        <a class="tile deck" href="#/linux/terminal"><span class="tile-ic linux">${icon('term')}</span><span class="tile-txt"><small>Type real commands</small><b>Terminal drills</b><small>${CO.terminal.length} tasks</small></span></a>
+        <a class="tile deck" href="#/linux/perms"><span class="tile-ic linux">${icon('lock')}</span><span class="tile-txt"><small>rwx ⇄ 755</small><b>Permissions trainer</b><small>Endless practice</small></span></a>`;
+  }
   function linuxHome() {
     setTitle('Linux unit', 'penguin');
-    const card = d => { const p = deckPct(d); return `<a class="tile deck" href="#/linux/${d.id}"><span class="tile-ic linux">${icon('penguin')}</span><span class="tile-txt"><small>${esc(d.sub)}</small><b>${esc(d.title)}</b><small>${d.terms.length} items${cS().best[d.id] !== undefined ? ` · exam best ${cS().best[d.id]}%` : ''}</small></span>${ring(p, `${d.title}: ${p}% mastered`)}</a>`; };
-    app.innerHTML = `<div class="pad"><div class="mode-head"><p class="eyebrow">NST 115 · Linux</p><h2>Linux unit</h2><p class="muted">The Linux days, the top 25 commands, and hands-on drills. Each set has a review sheet, flash review and practice exam.</p></div>
-      <h3 class="part-h">Lessons</h3><div class="tiles">${CO.decks.filter(d => d.kind === 'linux').map(card).join('')}</div>
-      <h3 class="part-h">Hands-on practice</h3><div class="tiles">
-        <a class="tile deck" href="#/linux/terminal"><span class="tile-ic linux">${icon('term')}</span><span class="tile-txt"><small>Type real commands</small><b>Terminal drills</b><small>${CO.terminal.length} tasks</small></span></a>
-        <a class="tile deck" href="#/linux/perms"><span class="tile-ic linux">${icon('lock')}</span><span class="tile-txt"><small>rwx ⇄ 755</small><b>Permissions trainer</b><small>Endless practice</small></span></a></div></div>`;
+    app.innerHTML = `<div class="pad"><div class="mode-head"><p class="eyebrow">NST 115 · Linux</p><h2>Linux unit</h2><p class="muted">The Linux days, the top 25 commands, and hands-on drills. This material is on the exam, so it's also listed in <a href="#/course">Exam prep</a>. Each set has a review sheet, flash review and practice exam.</p></div>
+      <div class="tiles">${linuxTiles()}</div></div>`;
   }
   function sheetMode(d, body, arg) {
     body.innerHTML = `<div class="pad"><div class="mode-head"><h2>${esc(d.kind === 'chapter' ? `Chapter ${d.num}: ${d.sub}` : d.title)}</h2><p class="muted">${d.kind === 'chapter' ? 'Quiz items first, then the rest of the unit exam items for this chapter.' : 'Items in your instructor\'s order.'} Turn on <b>Recall mode</b> to hide the answers, say each one from memory, reveal, then mark it.</p></div>

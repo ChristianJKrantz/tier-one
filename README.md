@@ -52,8 +52,8 @@ A separate tab (graduation-cap icon on the taskbar) built from the NST 115 revie
 - **Chapters 1-14**: each chapter combines its quiz review (Quizzes 1-14) and its part of the unit exam review (Unit Exams 1-4). Every item is answered from the textbook and class materials, with badges showing which test it's on (**Quiz 8**, **Unit Exam 3**) and a source tag (book chapter, class materials, or general knowledge to check against notes)
 - **Review sheet** with Recall mode (answers hidden until you've said them), **Flash review**, and a **Practice exam** that tells you what a wrong pick actually is but never reveals the right one
 
-### Linux tab
-The Linux unit has its own tab (penguin icon): Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers).
+### Linux unit
+The Linux unit is on the exam, so it appears in the Exam prep tab as its own section below the Windows chapters, and also has its own tab (penguin icon): Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers).
 
 <img src="docs/course.png" alt="NST 115 exam prep: chapters 1 to 14 with Quiz and Unit Exam badges" width="720">
 
