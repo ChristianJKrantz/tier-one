@@ -54,14 +54,14 @@ with sync_playwright() as p:
     # Home
     page.goto(URL)
     page.wait_for_selector('.tile')
-    check(page.locator('.tile').count() == 22, 'home shows 22 chapter tiles')
+    check(page.locator('.tile').count() == 23, 'home shows 23 chapter tiles')
     check('Trainee' in page.inner_text('.tray'), 'tray shows starting rank (Trainee)')
     shot(page, 'desktop.png')
 
     # Start menu search
     page.keyboard.press('Control+k')
     page.wait_for_selector('#stq')
-    check(page.locator('.st-app').count() == 22, 'Start menu lists all chapters')
+    check(page.locator('.st-app').count() == 23, 'Start menu lists all chapters')
     page.fill('#stq', 'bitlocker')
     page.wait_for_selector('.st-res a')
     check(page.locator('.st-res a').count() >= 1, 'Start search finds BitLocker')
@@ -184,7 +184,7 @@ with sync_playwright() as p:
     shot(page, 'rush.png')
     page.goto(URL + '#/progress')
     page.wait_for_selector('.prog')
-    check(page.locator('.prog tbody tr').count() == 22, 'progress table lists 22 chapters')
+    check(page.locator('.prog tbody tr').count() == 23, 'progress table lists 23 chapters')
     shot(page, 'progress.png')
     page.goto(URL)
     page.wait_for_selector('.tile')
@@ -195,7 +195,7 @@ with sync_playwright() as p:
     # NST 115 exam prep tab: chapters only; Linux is its own tab
     page.goto(URL + '#/course')
     page.wait_for_selector('.chtiles .tile')
-    check(page.locator('.chtiles .tile').count() == 15, 'exam prep lists chapters 0-14')
+    check(page.locator('.chtiles .tile').count() == 14, 'exam prep lists chapters 1-14 only')
     check('Linux Day' not in page.inner_text('#app'), 'no Linux decks mixed into the chapter list')
     shot(page, 'course.png')
     page.goto(URL + '#/course/ch8/sheet')

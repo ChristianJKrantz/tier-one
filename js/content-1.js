@@ -9,6 +9,57 @@
    run:   [[task, accepted answers separated by | (or an array when an answer contains |), hint 1, hint 2]]
    quiz:  [[question, [options], index of best option, hint, learn section index, [why each wrong option misses], isTicket]] */
 W.chapter({
+  id: 'c0', num: '0', part: 1, title: 'Why and what is an operating system?',
+  short: 'What is an OS?', icon: 'chip',
+  blurb: 'Before Windows itself: what an operating system is for, how it differs from BIOS/UEFI firmware, and the main OS families. (From the class slides.)',
+  learn: [
+    { t: 'The seven jobs of an operating system', q: 'If you removed the OS, what would stop working first?',
+      p: ['The OS is the manager between you, your apps and the hardware. It has seven areas of responsibility:',
+        '- **Process management**: processes are active, dynamic programs running in memory and carrying out instructions',
+        '- **Memory management**: memory holds data the CPU needs to reach quickly',
+        '- **File system management**: the structure the OS uses to organize, store, name and retrieve data on an SSD or HDD',
+        '- **Device management**: the behind-the-scenes traffic controller for all hardware and virtual peripherals',
+        '- **Security/privacy management**: built-in tools for oversight, control and protection, such as the firewall',
+        '- **Application management**: installing, allocating memory to, running, giving resources to and closing each app',
+        '- **Human interface**: every point where you interact with the PC: keyboard, mouse, touchscreen'],
+      key: ['Process, memory, file system, device, security/privacy, application management', 'Plus the human interface'] },
+    { t: 'BIOS/UEFI vs. the operating system', q: 'What runs before Windows even starts?',
+      p: ['**BIOS** (Basic Input/Output System) and **UEFI** (Unified Extensible Firmware Interface) are **firmware**, not an OS. Both are:',
+        '- hard-wired hardware **wake-up and verification** suites',
+        '- pre-set **boot managers** and **diagnostic utility** repositories',
+        '- **rarely updated**',
+        '- home to **basic network** configuration and utilities',
+        '- a **mini-OS for the pre-OS environment** of one machine',
+        'Once the firmware hands off, the **operating system** takes over everything listed in section 1.'],
+      key: ['BIOS/UEFI = firmware that wakes, checks and boots the hardware', 'A mini-OS for the pre-OS environment', 'The OS takes over after boot'] },
+    { t: 'Types of operating systems', p: ['- **Windows**: everywhere, most common on personal computers',
+        '- **Linux distributions**',
+        '- **ChromeOS** (Chromium)',
+        '- **Android** and **iOS** for phones and tablets',
+        '- Niche systems such as **Haiku** and **ReactOS**',
+        'NST 115 focuses on Windows 11 because of its market saturation, wide range of uses and ease of use. Linux and Windows Server are taught in separate courses.'],
+      key: ['Windows, Linux, ChromeOS, Android, iOS', 'Windows dominates personal computers'] }
+  ],
+  cards: [
+    ['Seven jobs of an OS', 'Process, memory, file system, device, security/privacy and application management, plus the human interface.'],
+    ['What is a process?', 'An active, dynamic program running in memory and carrying out instructions.'],
+    ['What is a file system?', 'The structure an OS uses to organize, store, name and retrieve data on a drive.'],
+    ['What does device management do?', 'Coordinates all hardware and virtual peripherals behind the scenes.'],
+    ['Is BIOS/UEFI an operating system?', 'No. It is firmware: a hard-wired mini-OS for the pre-OS environment that wakes, checks and boots the hardware.'],
+    ['What is a human interface?', 'Any point where a user interacts with the PC: keyboard, mouse, touchscreen.'],
+    ['Name five operating system families', 'Windows, Linux, ChromeOS, Android, iOS.']
+  ],
+  run: [],
+  quiz: [
+    ['The firewall belongs to which OS responsibility?', ['Memory management', 'Security/privacy management', 'Device management', 'Human interface'], 1, 'It protects the device.', 0, ['That keeps data close to the CPU.', '', 'That coordinates hardware.', 'That covers keyboards, mice and touch.']],
+    ['Which OS job decides where a program\'s data sits for the CPU to reach quickly?', ['File system management', 'Memory management', 'Application management', 'Process management'], 1, 'Think fast, short-term storage.', 0, ['That organizes data on the drive.', '', 'That handles an app\'s whole lifecycle.', 'That covers programs while they run.']],
+    ['Which statement about BIOS/UEFI is true?', ['It is updated every month like Windows', 'It is a mini-OS for the pre-OS environment', 'It replaces the need for an OS', 'It only exists on Macs'], 1, 'When does it run?', 1, ['Firmware is rarely updated.', '', 'It hands off to the OS.', 'PCs use it too.']],
+    ['A touchscreen is an example of which OS responsibility?', ['Device management only', 'The human interface', 'File system management', 'Security management'], 1, 'It\'s where a person touches the PC.', 0, ['Drivers are involved, but the category is about user interaction.', '', 'Unrelated to storage.', 'Unrelated to protection.']],
+    ['Why does NST 115 focus on Windows 11?', ['It is the only OS for PCs', 'Market saturation, wide range of uses and ease of use', 'Linux is too old', 'It is free'], 1, 'The slides give three reasons.', 2, ['Many OSes run on PCs.', '', 'Linux is taught in its own course.', 'Windows is a paid product.']]
+  ]
+});
+
+W.chapter({
   id: 'c1', num: '1', part: 1, title: 'Everything you need to know about Windows 11',
   short: 'Windows 11 at a glance', icon: 'spark',
   blurb: 'The big picture: what changed from Windows 10, how updates are delivered, and the hardware security baseline behind it all.',
@@ -35,7 +86,19 @@ W.chapter({
     { t: 'Security and hardware', p: ['Windows 11 turns on protections that were optional before: **Secure Boot** blocks unsigned boot code, **virtualization-based security (VBS)** and **memory integrity (HVCI)** isolate sensitive processes, **Windows Hello** replaces passwords with face, fingerprint or PIN sign-in, and **device encryption/BitLocker** protects data at rest.',
         'The TPM (Trusted Platform Module) is a tamper-resistant chip that stores encryption keys and measures the boot process, which is why it is mandatory.'],
       key: ['Secure Boot, VBS/memory integrity, Windows Hello, BitLocker', 'TPM stores keys and measures boot integrity'],
-      trap: 'Thinking the TPM requirement is about performance. It is about security features that depend on hardware.' }
+      trap: 'Thinking the TPM requirement is about performance. It is about security features that depend on hardware.' },
+    { t: 'Quick facts from class', q: 'When was Windows 11 released?',
+      p: ['- **Released October 5, 2021**, built on the same core as Windows 10',
+        '- **Annual feature updates** arrive in the second half of the year; monthly updates on the **second Tuesday**',
+        '- Find your **version and build** in **Settings > System > About**',
+        '- **Widgets** pane: **Windows key+W**; the Search bar also searches the web',
+        '- **No more Cortana**; **Internet Explorer is retired** and **Edge** is the default browser',
+        '- **Secure Boot and encryption** are on by default; subsystems for **Android and Linux**',
+        '- **HomeGroup was removed**; Windows Explorer is now **File Explorer**, with **Quick Access** in the navigation pane',
+        '- **Right-click Start** for admin shortcuts; left-click for your apps',
+        '- The **Windows Insider** program previews updates; **Feedback Hub** reports bugs and suggestions',
+        '- **Windows Security** is good enough that third-party antivirus is rarely needed'],
+      key: ['Released October 5, 2021', 'Version/build in Settings > System > About', 'Windows key+W opens Widgets', 'HomeGroup removed, Cortana gone, IE retired'] }
   ],
   cards: [
     ['What does `winver` show?', 'The Windows version (for example 22H2) and OS build number.'],
@@ -47,7 +110,10 @@ W.chapter({
     ['What engine is Microsoft Edge built on?', 'Chromium, the same open-source engine as Google Chrome.'],
     ['What is IE mode?', 'An Edge feature that renders legacy sites with the old Internet Explorer engine.'],
     ['Name 4 things a Microsoft account connects', 'OneDrive, settings sync, Microsoft Store purchases, BitLocker recovery key backup.'],
-    ['What are Snap layouts?', 'Window-tiling templates you get by hovering over a window\'s Maximize button (or Windows key+Z).']
+    ['What are Snap layouts?', 'Window-tiling templates you get by hovering over a window\'s Maximize button (or Windows key+Z).'],
+    ['Windows 11 release date', 'October 5, 2021'],
+    ['Where do you see your Windows version and build in Settings?', 'Settings > System > About'],
+    ['Windows key+W', 'Opens the Widgets pane']
   ],
   run: [
     ['Open the dialog box that shows which Windows version and build is installed.', 'winver|winver.exe', 'The command is a short mash-up of two words: "Windows" and "version".', 'Six letters, starts with "win".'],
@@ -59,6 +125,7 @@ W.chapter({
     ['Which update type normally arrives every month?', ['Feature updates', 'Quality (security) updates', 'Edition upgrades', 'Firmware resets'], 1, 'One kind arrives yearly, the other on Patch Tuesday.', 1, ['These arrive about once a year.', '', 'Edition upgrades are something you buy or apply on purpose.', 'Windows Update doesn\'t reset firmware.']],
     ['Your coworker\'s company app only works in Internet Explorer. What is the supported option on Windows 11?', ['Reinstall Internet Explorer from the Store', 'Use IE mode in Microsoft Edge', 'Install Windows 10 in a dual boot', 'Run the site in Windows Sandbox'], 1, 'The default browser has a compatibility feature for this.', 3, ['IE is retired and not available from the Store.', '', 'Overkill and not the supported fix.', 'Sandbox still has no standalone IE.'], 1],
     ['Which benefit comes from signing in with a Microsoft account instead of a local account?', ['Faster boot times', 'Automatic backup of the BitLocker recovery key', 'Access to Safe Mode', 'Administrator rights'], 1, 'Think about what gets stored in the cloud.', 3, ['Account type doesn\'t change boot speed.', '', 'Safe Mode works with any account.', 'Either account type can be admin or standard.']],
+    ['Which home-networking feature from older Windows versions was removed?', ['File sharing', 'HomeGroup', 'Network discovery', 'Remote Desktop'], 1, 'It was a simple home sharing group.', 5, ['Still available through sharing settings.', '', 'Still there in network settings.', 'Still there on Pro.']],
     ['How long is a Windows 11 Pro feature update supported?', ['12 months', '18 months', '24 months', '36 months'], 2, 'Enterprise gets a year longer than Home and Pro.', 1, ['Shorter than the actual policy.', 'Shorter than the actual policy.', '', 'That is the Enterprise/Education number.']]
   ]
 });

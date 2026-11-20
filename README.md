@@ -20,12 +20,12 @@ Works in any modern browser on desktop, tablet or phone. No install, no account,
 
 | Part | Chapters |
 |---|---|
-| **I · Windows essentials** | 1 Windows 11 at a glance · 2 Setup, install & activation · 3 Start, taskbar & windows · 4 Personalization · 5 Apps & Task Manager · 6 Built-in apps · 7 Microsoft Edge · 8 Disks & OneDrive |
+| **I · Windows essentials** | 0 What is an OS? · 1 Windows 11 at a glance · 2 Setup, install & activation · 3 Start, taskbar & windows · 4 Personalization · 5 Apps & Task Manager · 6 Built-in apps · 7 Microsoft Edge · 8 Disks & OneDrive |
 | **II · Managing Windows 11** | 9 File Explorer · 10 Accounts & sign-in · 11 Networking · 12 Security & privacy · 13 Hardware & drivers · 14 Performance & power · 15 Troubleshoot & recover |
 | **III · For IT pros** | 16 Terminal, PowerShell & registry · 17 Virtual machines · 18 Android & Linux · 19 Enterprise management |
 | **IV · Appendixes** | A Editions & licensing · B Windows Insider · C Help & support |
 
-That adds up to **116 lessons**, **234 flashcards**, **78 command drills** and **124 questions and help desk tickets**.
+Plus a **Chapter 0** (what an operating system is) from the class slides. That adds up to **123 lessons**, **244 flashcards**, **78 command drills** and **132 questions and help desk tickets**.
 
 ---
 

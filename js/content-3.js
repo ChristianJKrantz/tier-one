@@ -81,7 +81,22 @@ W.chapter({
         'VMs can be **exported** (copy of config + disks) and **imported** on another host.'],
       key: ['Win 11 VM needs Secure Boot + virtual TPM', 'Automatic start/stop actions', 'Export/import moves VMs between hosts'] },
     { t: 'VMs in the cloud', p: ['**Azure Virtual Machines** run Windows in Microsoft\'s datacenters on pay-per-use pricing. **Azure Virtual Desktop** delivers multi-session desktops. **Windows 365 Cloud PC** streams a personal, persistent Windows PC for a fixed monthly per-user price, reachable from any device.'],
-      key: ['Azure VMs: pay as you go', 'Windows 365: per-user monthly cloud PC'] }
+      key: ['Azure VMs: pay as you go', 'Windows 365: per-user monthly cloud PC'] },
+    { t: 'Twelve benefits of virtual machines', q: 'Why would a business run ten VMs instead of buying ten PCs?',
+      p: ['From the class slides:',
+        '- **Security isolation**: each VM is cut off from the host and other VMs, so malware can\'t spread',
+        '- **Testing isolation (sandboxing)**: keep apps and OSes in separate, easy-to-manage environments',
+        '- **Flexibility**: adjustable virtual hardware; easy to move between environments',
+        '- **Cost-effective**: one well-equipped machine runs many VMs',
+        '- **Easy maintenance and disaster recovery**: clone, back up, restore and update easily',
+        '- **Scalability**: scale VMs up or down as needed',
+        '- **Legacy system support**: keep old OSes and apps running',
+        '- **Snapshotting**: roll back to a previous state',
+        '- **Multi-tenancy**: many users share hardware while staying isolated',
+        '- **Easy deployment**: stand up new environments quickly',
+        '- **Reduced downtime**: restart or restore fast',
+        '- **Improved resource utilization**: less wasted hardware'],
+      key: ['Isolation (security and testing), flexibility, cost', 'Recovery, scalability, legacy support, snapshots', 'Multi-tenancy, deployment, downtime, utilization'] }
   ],
   cards: [
     ['Which editions include Hyper-V?', 'Pro, Enterprise, Education'], ['Hyper-V hardware needs', '64-bit CPU with SLAT, VT-x/AMD-V enabled in firmware, 4 GB+ RAM'], ['Hyper-V Manager command', 'virtmgmt.msc'],
@@ -100,6 +115,7 @@ W.chapter({
     ['You need to open a suspicious attachment safely and throw everything away afterward. Best tool?', ['Hyper-V checkpoint', 'Windows Sandbox', 'InPrivate window', 'Standard user account'], 1, 'It\'s disposable by design.', 1, ['Works but heavier.', '', 'Doesn\'t isolate files.', 'Still runs on your real system.'], 1],
     ['Lab VMs must talk to each other but never reach the host or LAN. Which switch?', ['External', 'Internal', 'Private', 'Default Switch'], 2, 'The most isolated.', 2, ['Reaches the LAN.', 'Includes the host.', '', 'Provides NAT internet.']],
     ['Before installing a risky update in a VM, what lets you revert quickly?', ['Export the VM', 'Take a checkpoint', 'Increase memory', 'Change generation'], 1, 'A snapshot of state.', 3, ['Possible but slow.', '', 'Unrelated.', 'Impossible after creation.']],
+    ['A company keeps an old accounting app that only runs on Windows 7. Which VM benefit helps most?', ['Multi-tenancy', 'Legacy system support', 'Scalability', 'Reduced downtime'], 1, 'Old software, new hardware.', 6, ['That\'s about sharing hardware between users.', '', 'That\'s about growing or shrinking capacity.', 'That\'s about recovering quickly.'], 1],
     ['Which edition can\'t run Hyper-V?', ['Pro', 'Home', 'Enterprise', 'Education'], 1, 'The consumer edition.', 0, ['Includes it.', '', 'Includes it.', 'Includes it.']]
   ]
 });
@@ -201,7 +217,20 @@ W.chapter({
         '- **Enterprise LTSC (Long-Term Servicing Channel):** no feature updates for years (10-year support for some releases), no Store or inbox apps; for fixed-function devices like medical equipment or ATMs'],
       key: ['E3 = Enterprise features; E5 = + Defender for Endpoint', 'Microsoft 365 bundles bundle Windows, Office, Intune', 'LTSC = stable, no feature updates, for special devices'] },
     { t: 'Editions for education', p: ['**Education** and **Pro Education** are Enterprise/Pro equivalents licensed to schools with education-friendly defaults. **Windows 11 SE** is a locked-down cloud-first edition for low-cost student laptops, managed only by Intune for Education with a restricted app list.'],
-      key: ['Education ≈ Enterprise for schools', 'Windows 11 SE: locked-down, Intune for Education'] }
+      key: ['Education ≈ Enterprise for schools', 'Windows 11 SE: locked-down, Intune for Education'] },
+    { t: 'Hardware limits by edition', q: 'How much RAM can Windows 11 Home use?',
+      p: ['From the class slides (all editions need a 1 GHz+ CPU and support up to 64 cores per CPU):',
+        '- **Home**: **1 CPU**, up to **128 GB RAM**',
+        '- **Pro, Enterprise, Education**: **1 or 2 CPUs**, up to **2 TB RAM**',
+        '- **Pro for Workstations**: up to **4 CPUs**, up to **6 TB RAM**',
+        'Pro for Workstations also supports **NVDIMM-N** persistent memory (keeps data in RAM through power loss), **SMB Direct** file transfers over RDMA, and **ReFS**, which can pair with Storage Spaces to recover damaged files.'],
+      key: ['Home: 1 CPU, 128 GB', 'Pro/Enterprise/Education: 2 CPUs, 2 TB', 'Pro for Workstations: 4 CPUs, 6 TB'] },
+    { t: 'What each step up adds', p: ['- **Home** (the usual OEM install): Start and taskbar, Settings, NTFS, TCP/IP networking, power management, Search index, TPM, Secure Boot, built-in apps, Defender, **Windows Hello**',
+        '- **Pro** adds: **Hyper-V**, **Windows Sandbox**, **BitLocker** and **BitLocker To Go**, **EFS**, language packs, **Windows Update for Business**, **mobile device management**, **domain join and Group Policy**, **Azure AD**, **Autopilot**, Windows Information Protection, **IE mode**, **Remote Desktop host**',
+        '- **Enterprise** adds: **Azure Virtual Desktop**, **Credential Guard**, **Exploit Guard**, **DirectAccess** (secure connection without a VPN), **Universal Print**, and **Defender for Endpoint** with E5 licenses',
+        '- **IoT Enterprise**: Enterprise features with different licensing and distribution',
+        '- **N / KN** and Single Language versions also exist'],
+      key: ['Pro: Hyper-V, Sandbox, BitLocker, EFS, domain join, RDP host', 'Enterprise: Credential Guard, Exploit Guard, DirectAccess, Universal Print'] }
   ],
   cards: [
     ['Name 4 things Pro has that Home doesn\'t', 'BitLocker, Hyper-V, Windows Sandbox, Remote Desktop host (also Group Policy, domain join).'], ['What does Enterprise E5 add over E3?', 'Microsoft Defender for Endpoint (Plan 2)'],
@@ -212,6 +241,7 @@ W.chapter({
   quiz: [
     ['A home user wants to run Windows Sandbox. They have Home. What do you advise?', ['Install it from the Store', 'Upgrade to Pro', 'Use WSL', 'Enable it in msconfig'], 1, 'Edition feature.', 0, ['It\'s not a Store app.', '', 'That\'s Linux, not Sandbox.', 'Not possible.'], 1],
     ['A hospital needs Windows on an MRI controller with no feature changes for years. Edition?', ['Pro', 'Enterprise LTSC', 'Home', 'Pro Education'], 1, 'Long-term servicing.', 1, ['Gets yearly feature updates.', '', 'Consumer edition.', 'School licensing.'], 1],
+    ['A video editor needs 512 GB of RAM in one PC. What is the lowest edition that supports it?', ['Home', 'Pro', 'Pro for Workstations', 'SE'], 1, 'Compare 128 GB, 2 TB and 6 TB.', 3, ['Home tops out at 128 GB.', '', 'Works, but more than needed.', 'SE is for school laptops.'], 1],
     ['Which edition includes Microsoft Defender for Endpoint?', ['Enterprise E3', 'Enterprise E5', 'Pro', 'Home'], 1, 'The higher tier.', 1, ['Doesn\'t include it.', '', 'Doesn\'t include it.', 'Doesn\'t include it.']],
     ['A small office PC on Home must join the company domain. What\'s required?', ['A domain admin password only', 'Upgrading to Pro or higher', 'Windows Update', 'A new TPM'], 1, 'Home can\'t join.', 0, ['Credentials aren\'t enough on Home.', '', 'Updates don\'t add the feature.', 'Hardware isn\'t the issue.'], 1]
   ]

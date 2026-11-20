@@ -552,7 +552,7 @@
   const deckById = id => CO.decks.find(d => d.id === id);
   const base = d => d.kind === 'linux' ? '#/linux' : '#/course';
   const dIcon = d => d.kind === 'linux' ? 'penguin' : 'course';
-  const onChips = id => ((CO.on[id] || []).length ? CO.on[id] : ['Class slides']).map(l => `<span class="onchip ${/Unit/.test(l) ? 'unit' : /slides/.test(l) ? 'slides' : ''}">${esc(l)}</span>`).join('');
+  const onChips = id => (CO.on[id] || []).map(l => `<span class="onchip ${/Unit/.test(l) ? 'unit' : /slides/.test(l) ? 'slides' : ''}">${esc(l)}</span>`).join('');
   const DMODES = [['sheet', 'Review sheet', 'learn'], ['flash', 'Flash review', 'cards'], ['exam', 'Practice exam', 'ticket']];
   function courseView(id, mode, arg) {
     if (id === 'terminal') return terminalView();
