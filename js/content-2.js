@@ -26,7 +26,10 @@ W.chapter({
       p: ['The **Windows Search** service maintains an **index** of file names, properties and contents for indexed locations (user folders by default). **Classic** indexing covers libraries and desktop; **Enhanced** indexes the whole PC. Searches outside the index crawl the disk and are slow.',
         'Manage it in Settings > Privacy & security > Searching Windows, or **Indexing Options** (control srchadmin.dll), where you can add locations, file types and **Rebuild** a broken index.',
         'Advanced Query Syntax: `kind:document`, `date:last week`, `size:>100MB`, `ext:.pdf`, `author:Chris`, combined with AND/OR/NOT and quotes; `*` and `?` wildcards. Save a search as a **.search-ms** file.'],
-      key: ['Indexed = fast; outside index = slow crawl', 'Indexing Options > Rebuild fixes a broken index', 'kind:, date:, size:, ext: filters', 'Save searches as .search-ms'] }
+      key: ['Indexed = fast; outside index = slow crawl', 'Indexing Options > Rebuild fixes a broken index', 'kind:, date:, size:, ext: filters', 'Save searches as .search-ms'] },
+    { t: "Class notes: the File Explorer window and file properties", q: "Name the six parts of a File Explorer window.",
+      p: ["**The six basic parts of a File Explorer window:** **navigation pane**, **command bar**, **address bar**, **tabs** (each location in its own tab), **details/content pane**, **search box**", "**File properties** (right-click > Properties):", "- **General**: change the file’s default app", "- **Security**: who can read, write, modify", "- **Details**: review metadata; **Remove Properties and Personal Information**", "- **Advanced**: indexing, archiving, **compression** and **encryption**", "- **Previous Versions**: earlier copies if **File History** is enabled", "**Search options**: … > Options > **Search** tab to refine how and where File Explorer searches"],
+      key: ["Six parts: navigation pane, command bar, address bar, tabs, content pane, search box", "Advanced tab: compression and encryption", "Previous Versions needs File History"] }
   ],
   cards: [
     ['Windows key+E', 'Open File Explorer'], ['Where are user profiles stored?', 'C:\\Users\\username'], ['%appdata% opens which folder?', 'AppData\\Roaming'],
@@ -83,7 +86,10 @@ W.chapter({
       p: ['Every account and group has a unique **security identifier (SID)**. When you sign in you receive an **access token** listing your SIDs and privileges.',
         'Every securable object (file, folder, registry key, printer) has an **access control list (ACL)** made of **access control entries (ACEs)** that allow or deny permissions to SIDs. Windows compares the token against the ACL. **Deny** entries take precedence over Allow.',
         '`whoami /all` shows your SIDs, groups and privileges.'],
-      key: ['SID identifies each account/group', 'Access token is issued at sign-in', 'ACL = list of ACEs (allow/deny)', 'Deny beats Allow', 'whoami /all shows your token'] }
+      key: ['SID identifies each account/group', 'Access token is issued at sign-in', 'ACL = list of ACEs (allow/deny)', 'Deny beats Allow', 'whoami /all shows your token'] },
+    { t: "Class notes: managing local accounts and family",
+      p: ["- A **user account** represents a person or entity that can use the computer: think username and password", "- **Local account management** (Control Panel > User Accounts and Settings > Accounts): change account **name** and **type**, **manage credentials**, create a **password reset disk**, manage **EFS file encryption certificates**, **advanced profile properties** (a **roaming profile** centralizes your account across domain PCs), and **environment variables** (user-defined values that affect running processes)", "- **Family accounts**: create a Microsoft account for each member and manage them at **account.microsoft.com/family**: monitor usage and searches, **block websites**, limit apps and games by rating, control **Store purchases**, **restrict usage times**. Add at **Settings > Accounts > Family & other people > Add a family member**", "- **Sign out, switch accounts or lock** (Windows key+L): click the profile icon on Start"],
+      key: ["Password reset disk and EFS certificates live in User Accounts", "Family safety at account.microsoft.com/family", "Roaming profile = same account on every domain PC"] }
   ],
   cards: [
     ['Why is a Windows Hello PIN safer than a password?', 'It is tied to that device\'s TPM; it can\'t be used elsewhere.'], ['Windows key+L', 'Lock the PC'],
@@ -146,7 +152,10 @@ W.chapter({
         '- 169.254 address: **DHCP** problem',
         '- `tracert` shows where along the path packets stop',
         '**Network reset** (Advanced network settings) reinstalls adapters and resets components as a last resort. The **Network and Internet troubleshooter** automates common checks.'],
-      key: ['Bottom-up: link > IP > gateway > internet > DNS', 'IP works, name fails = DNS', 'tracert finds where packets stop', 'Network reset is the last resort'] }
+      key: ['Bottom-up: link > IP > gateway > internet > DNS', 'IP works, name fails = DNS', 'tracert finds where packets stop', 'Network reset is the last resort'] },
+    { t: "Class notes: connecting and sharing", q: "What do you need for a network connection?",
+      p: ["- **Requirements**: a network adapter with current drivers; an **RJ-45** Ethernet jack and cable or a Wi-Fi access point; a switch, router or ISP combo device; an **ISP** service agreement", "- Windows detects and configures network hardware automatically. **Wired** connects right away; **Wi-Fi** needs a choice and passphrase", "- The **network status icon** in the system tray shows status, lets you pick Wi-Fi, diagnose problems, and reach settings (Wi-Fi, airplane mode, Ethernet, VPN, hotspot, advanced adapter options). Wired shows first; strongest Wi-Fi is listed first", "- **TCP/IP** is the default protocol; it routes data by IP address", "- **Hidden (non-broadcasting) networks**: Manage known networks > **Add network** > name, security type, key", "- **Public folder sharing**: files in **C:\\Users\\Public** are shared with everyone who signs in to the PC; the creator has **Full Control**, other local users **Modify**", "- Remote Desktop tip: if you save credentials you can pin the connection to the taskbar"],
+      key: ["Wired connects automatically; Wi-Fi needs a passphrase", "C:\\Users\\Public is shared with every local user"] }
   ],
   cards: [
     ['169.254.x.x address means', 'APIPA: the PC couldn\'t reach a DHCP server.'], ['ipconfig /flushdns', 'Clears the DNS resolver cache.'], ['Default Remote Desktop port', 'TCP 3389'],
@@ -205,7 +214,10 @@ W.chapter({
       key: ['BitLocker = whole volume, uses TPM', 'Recovery key = 48 digits; store it safely', 'BitLocker To Go = removable drives', 'EFS = per-file, tied to the user certificate', 'manage-bde -status'] },
     { t: 'Windows Defender Firewall', p: ['The firewall filters traffic per network profile (**Domain, Private, Public**), blocking unsolicited **inbound** traffic by default and allowing outbound. Allow an app via "Allow an app through firewall."',
         '**Windows Defender Firewall with Advanced Security** (`wf.msc`) creates inbound/outbound rules by program, port and protocol, and logs. **Restore defaults** undoes rule chaos.'],
-      key: ['Blocks unsolicited inbound by default', 'Separate settings per profile', 'wf.msc = advanced rules', 'Restore defaults resets rules'] }
+      key: ['Blocks unsolicited inbound by default', 'Separate settings per profile', 'wf.msc = advanced rules', 'Restore defaults resets rules'] },
+    { t: "Class notes: layered security, Defender and the firewall", q: "How many layers of protection can you name?",
+      p: ["**Multilayered security strategy** (class slides): use a **hardware router**; a **software firewall**; **biometric sign-in**; a **standard account with UAC**; keep Windows **updated**; use an **antimalware** program and **email protection**; **parental controls**; **self-discipline**; stay informed about new threats", "- **Windows Defender** scans every file you touch (downloads, attachments) using two services for virus, spyware and **heuristic** (live behavior) analysis. **Settings > Privacy & security > Windows Security > Virus & threat protection**; scans: **Quick, Full, Custom, Offline** (often need a restart)", "- **Windows Firewall**: **stateful packet filtering and inspection**; on by default; **denies all inbound** traffic unless a rule allows it and **allows outbound** unless a rule blocks it; separate **domain, private and public** profiles. **Control Panel > Windows Defender Firewall**; change only with extreme caution and **make a restore point first**", "- **Privacy**: Settings > Privacy & security > **Diagnostics & feedback** sets how much diagnostic data goes to Microsoft"],
+      key: ["Firewall: inbound denied, outbound allowed by default", "Defender scans: Quick, Full, Custom, Offline", "Restore point before firewall changes"] }
   ],
   cards: [
     ['Default UAC level', 'Notify me only when apps try to make changes (with dimming)'], ['Why does UAC dim the screen?', 'The secure desktop blocks other programs from interacting with the prompt.'],
@@ -260,7 +272,10 @@ W.chapter({
       key: ['Printers & scanners in Bluetooth & devices', 'Stuck queue: stop Spooler, clear spool\\PRINTERS, restart', 'Let Windows manage default = last used'] },
     { t: 'Displays and audio', p: ['**System > Display** sets resolution (use the **recommended/native** one), refresh rate, orientation, HDR and **scale** for high-DPI screens. **Windows key+P** switches projection modes: PC screen only, **Duplicate**, **Extend**, Second screen only. Drag monitor boxes to match physical layout; Identify shows the numbers.',
         '**Night light** reduces blue light on a schedule. **System > Sound** picks default output/input devices, and the volume mixer sets per-app volume.'],
-      key: ['Use native resolution', 'Win+P: duplicate / extend', 'Scale for high-DPI', 'Night light = less blue light'] }
+      key: ['Use native resolution', 'Win+P: duplicate / extend', 'Scale for high-DPI', 'Night light = less blue light'] },
+    { t: "Class notes: drivers and printers",
+      p: ["- **Device drivers** are control programs that handle communication between a device and the OS. **General class drivers** (audio, network, webcams, display, printers, monitors, keyboards, scanners, mice, phones, removable storage) already ship with Windows", "- **Third-party drivers** not signed by Microsoft need admin credentials; **Windows Update** offers newer drivers and installs some with cumulative updates; many devices include installers", "- **Printers**: use plug-and-play printers when possible; otherwise **Settings > Bluetooth & devices > Printers & scanners > Add device/printer**. Manage drivers in Device Manager > Printers; manage printers and queues in **Print Management**", "- A **USB printer** with factory drivers is easiest; a **network printer by IP address** is painless if the IP is static (otherwise use its domain name)"],
+      key: ["General class drivers ship with Windows", "Unsigned third-party drivers need admin rights", "Network printers: use a static IP"] }
   ],
   cards: [
     ['Device Manager command', 'devmgmt.msc'], ['Yellow exclamation in Device Manager', 'Device has a problem: driver missing or error'], ['Down arrow on a device', 'Device is disabled'],
@@ -311,7 +326,10 @@ W.chapter({
     { t: 'Battery and power', p: ['**Settings > System > Power & battery** sets the power mode (Best power efficiency, Balanced, Best performance), screen/sleep timeouts and **Battery saver** (turns on automatically at a chosen percentage, e.g. 20%).',
         '`powercfg /batteryreport` creates an HTML report comparing **design capacity** to **full charge capacity** (wear). `powercfg /energy` diagnoses power problems, `powercfg /list` shows plans, `powercfg /a` shows available sleep states.',
         '**Sleep** keeps RAM powered; **hibernate** writes RAM to hiberfil.sys and powers off. **Fast Startup** is a hybrid shutdown that hibernates the kernel; disabling it is a classic fix for driver/boot oddities.'],
-      key: ['Battery saver kicks in at a set %', 'powercfg /batteryreport compares design vs. full charge capacity', 'Sleep = RAM powered; hibernate = RAM to disk', 'Fast Startup = partial hibernation at shutdown'] }
+      key: ['Battery saver kicks in at a set %', 'powercfg /batteryreport compares design vs. full charge capacity', 'Sleep = RAM powered; hibernate = RAM to disk', 'Fast Startup = partial hibernation at shutdown'] },
+    { t: "Class notes: Resource Monitor, Services and power",
+      p: ["- **Resource Monitor**: search for it or use the … link on Task Manager’s Performance page. More specific real-time monitoring with checkboxes you can save; shows exactly which process or file is the culprit", "- **Services** are background programs with **no GUI**. Open from Task Manager > Services > **Open Services**, or search **services**; **Extended** view adds descriptions", "- **Power management** can be set for the device and the battery: **Settings > System > Power & battery**"],
+      key: ["Resource Monitor pinpoints the culprit", "Services run in the background with no GUI"] }
   ],
   cards: [
     ['System Information command', 'msinfo32'], ['Resource Monitor command', 'resmon'], ['Services console', 'services.msc'],

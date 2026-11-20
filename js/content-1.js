@@ -241,7 +241,10 @@ W.chapter({
       key: ['Win+Tab = Task View', 'Ctrl+Win+D new desktop; Ctrl+Win+Left/Right switch; Ctrl+Win+F4 close'] },
     { t: 'Keyboard, voice and pen', p: ['Classic shortcuts still matter: **Ctrl+C/X/V** copy/cut/paste, **Ctrl+Z/Y** undo/redo, **Ctrl+A** select all, **Ctrl+Shift+Esc** opens Task Manager, **Windows key+L** locks, **Windows key+E** opens File Explorer, **Windows key+R** opens Run, **Windows key+V** opens clipboard history.',
         '**Windows key+.** (period) opens the emoji panel. **Windows key+H** starts voice typing (dictation). The Touch Keyboard and pen settings live under Settings > Personalization and Bluetooth & devices.'],
-      key: ['Ctrl+Shift+Esc Task Manager; Win+L lock; Win+E Explorer; Win+R Run', 'Win+V clipboard history; Win+. emoji; Win+H voice typing'] }
+      key: ['Ctrl+Shift+Esc Task Manager; Win+L lock; Win+E Explorer; Win+R Run', 'Win+V clipboard history; Win+. emoji; Win+H voice typing'] },
+    { t: "Class notes: the desktop and system tray", q: "Which settings page turns on the on-screen keyboard?",
+      p: ["- **Start button right-click** gives a shortcut menu of admin and system functions; right-clicking apps lets you **pin to Start or taskbar**, **run as administrator**, **open file location** or **uninstall**", "- **Desktop icons**: **Settings > Personalization > Themes > Desktop icon settings**", "- **Aero Shake**: rapidly shaking a window’s title bar **minimizes all other open windows**", "- **Mouse settings**: **Settings > Accessibility > Mouse pointer and touch** (scroll speed, pointer style, primary button)", "- **Touch/on-screen keyboard**: **Settings > Accessibility > Keyboard > On-screen keyboard**, or Run **`osk`**; add the touch keyboard to the taskbar under **Taskbar settings > System tray icons**", "- **Multiple displays**: Taskbar behaviors lets you pick which screen shows the taskbar"],
+      key: ["Aero Shake minimizes all other windows", "osk opens the on-screen keyboard", "Desktop icons live under Themes"] }
   ],
   cards: [
     ['Windows key+X', 'Quick Link (power user) menu'], ['Windows key+A', 'Quick Settings'], ['Windows key+N', 'Notification center and calendar'],
@@ -284,7 +287,10 @@ W.chapter({
       key: ['Time & language: time zone, formats, region, languages', 'Win+Spacebar switches input language/keyboard', 'Wrong clock = certificate/sign-in errors'] },
     { t: 'Fonts and readability', p: ['Fonts are installed by right-clicking a font file > Install (or Install for all users), or through Settings > Personalization > Fonts. They live in **C:\\Windows\\Fonts**.',
         '**Text size** (Accessibility > Text size) enlarges only text; **Scale** (System > Display) enlarges everything. **ClearType** font smoothing (`cttune`) tunes text rendering on LCDs. **Magnifier** opens with Windows key+Plus (+) and closes with Windows key+Esc.'],
-      key: ['Fonts live in C:\\Windows\\Fonts', 'Text size vs. Scale: text only vs. everything', 'cttune = ClearType Text Tuner', 'Win+Plus Magnifier; Win+Esc closes it'] }
+      key: ['Fonts live in C:\\Windows\\Fonts', 'Text size vs. Scale: text only vs. everything', 'cttune = ClearType Text Tuner', 'Win+Plus Magnifier; Win+Esc closes it'] },
+    { t: "Class notes: colors, appearance and desktop icons",
+      p: ["- **Accent colors**: choose one or let Windows pick one that complements the background (**Settings > Personalization > Colors**)", "- **Transparency effects** make Start, the taskbar and the action center see-through", "- Show the **accent color on title bars and window borders**; **high contrast** settings help with visual impairment", "- Search **“Adjust the appearance and performance of Windows”** for a dialog full of visual-effect checkboxes", "- Right-click the desktop > **View** to change how desktop icons are arranged", "- **Fonts**: you can change style and clarity, not just size; download extra fonts with caution"],
+      key: ["Colors page: mode, accent color, transparency", "Adjust appearance and performance = visual effects checkboxes"] }
   ],
   cards: [
     ['What does a Windows theme bundle?', 'Background, accent color, sound scheme and mouse pointers.'], ['Where are fonts stored?', 'C:\\Windows\\Fonts'],
@@ -330,7 +336,10 @@ W.chapter({
     { t: 'Defaults, features and AutoPlay', p: ['**Default apps** (Settings > Apps > Default apps) assigns which app opens each file type (.pdf, .jpg) or link type (http, mailto).',
         '**Windows features** (`optionalfeatures`) turns on optional components like Hyper-V, Windows Sandbox, Telnet Client, .NET 3.5 and WSL.',
         '**AutoPlay** (Bluetooth & devices > AutoPlay) decides what happens when you insert a USB drive or memory card. Turning it off is a common security hardening step.'],
-      key: ['Default apps = file and link associations', 'optionalfeatures = Turn Windows features on or off', 'AutoPlay controls removable-media actions'] }
+      key: ['Default apps = file and link associations', 'optionalfeatures = Turn Windows features on or off', 'AutoPlay controls removable-media actions'] },
+    { t: "Class notes: managing apps", q: "Where are Microsoft Store apps actually installed?",
+      p: ["- **Inventory**: **Settings > Apps > Installed apps** (complete list) or **Start > All apps** (shorter list)", "- **Advanced options** (Installed apps > …): specifications, disk space, permissions, background permissions; **Terminate**, **Repair**, or **Reset** (drastic: deletes the app’s user data)", "- **Store apps** live in the hidden, locked **%ProgramFiles%\\WindowsApps** folder (no tampering). They install **per user**: other users must install the same app themselves", "- **Store pages** show type, **ESRB rating**, reviews, screenshots, version, publisher, size, permissions; most apps **update automatically**", "- **Provisioned/inbox apps** are also in the Store; **core OS apps** aren’t", "- **Default apps**: usually set by the installer; change at **Settings > Apps > Default apps**, or right-click a file > **Open with > Choose another app**", "- **Optional features**: **Settings > System > Optional features > Add an optional feature** (usually needs a restart); **More Windows features** opens the checkbox dialog", "- **Task Manager** misses items set by Group Policy or Task Scheduler; Microsoft’s free **Autoruns** shows everything"],
+      key: ["Store apps: %ProgramFiles%\\WindowsApps, installed per user", "Reset deletes the app’s data", "Autoruns sees what Task Manager misses"] }
   ],
   cards: [
     ['Three Windows app types', 'Legacy desktop (Win32), Windows/Store packaged apps, Progressive Web Apps.'], ['What does `winget upgrade --all` do?', 'Updates every app winget can manage.'],
@@ -380,7 +389,10 @@ W.chapter({
         'Snipping Tool also has a delay timer and can record the screen.'],
       key: ['Win+Shift+S = snip overlay to clipboard', 'Win+PrtScn = saved file in Pictures\\Screenshots', 'Alt+PrtScn = active window only'] },
     { t: 'Maps', p: ['Maps searches places, gives driving/transit/walking directions and can **download offline maps** for regions with no connection (Settings > Apps > Offline maps).'],
-      key: ['Offline maps can be downloaded per region'] }
+      key: ['Offline maps can be downloaded per region'] },
+    { t: "Class notes: built-in app highlights",
+      p: ["- **External apps** aren’t part of a Windows install; **internal apps** come with it, visibly or in the background", "- **Mail, Calendar, People and To Do**: separate apps that are tightly linked and can sync multiple email and calendar accounts", "- **Clipchamp**: video creation focused on short, ad-style videos", "- **OEMs** often add their own provisioned apps: security, diagnostic and connectivity tools or games"],
+      key: ["Mail, Calendar, People and To Do sync together", "Clipchamp makes short videos"] }
   ],
   cards: [
     ['Windows key+Shift+S', 'Snipping Tool overlay; snip goes to clipboard'], ['Windows key+PrtScn', 'Saves a full-screen PNG to Pictures\\Screenshots'],
@@ -477,7 +489,10 @@ W.chapter({
     { t: 'Volumes, letters and VHDs', p: ['In Disk Management you can change a **volume label** or **drive letter**, mount a volume into an empty **NTFS folder** instead of a letter, **shrink** or **extend** NTFS volumes (extend needs adjacent unallocated space), and delete volumes.',
         'Deleting or quick-formatting doesn\'t truly erase data. To wipe free space use `cipher /w:C:`, or DiskPart\'s `clean all` to zero a whole disk.',
         '**Virtual hard disks** (.vhd, .vhdx) are files that act like disks; double-click to mount, or create one in Disk Management. VHDX supports up to 64 TB.'],
-      key: ['Extend requires adjacent unallocated space', 'Mount a volume in an empty NTFS folder', 'cipher /w wipes free space; diskpart clean all zeros a disk', 'VHDX: virtual disk file, up to 64 TB'] }
+      key: ['Extend requires adjacent unallocated space', 'Mount a volume in an empty NTFS folder', 'cipher /w wipes free space; diskpart clean all zeros a disk', 'VHDX: virtual disk file, up to 64 TB'] },
+    { t: "Class notes: partitions, volumes and storage settings", q: "What’s the difference between a partition and a volume?",
+      p: ["- **Partition table**: defines how the OS stores data on a drive, like a book’s table of contents", "- **File system**: the organization pattern for files and folders, like a book’s index; keeps integrity, security, metadata and multi-user access", "- **Partition**: an **unformatted** division of disk space. **Volume**: a **formatted** partition with a file system, letter and name; it can be one disk or span several", "- **ReFS** (Resilient File System): huge capacity (millions of TB) with resiliency features; workstation-oriented, not for the average consumer", "- **Disk Management tasks**: **Shrink** (back up first; optimize first), **New volume** (right-click unallocated space), **rename** (Properties), **Change Drive Letters and Paths**", "- **Settings > System > Storage**: bar graphs by category; click a drive for details; **Advanced storage settings** manages other drives and **where new content is saved**"],
+      key: ["Partition = unformatted; volume = formatted with letter and name", "ReFS = resilient, workstation file system", "Optimize before you shrink"] }
   ],
   cards: [
     ['GPT vs. MBR size limit', 'MBR tops out at 2 TB; GPT supports much larger disks.'], ['Max file size on FAT32', '4 GB'], ['Best file system for large files on a USB stick', 'exFAT'],
