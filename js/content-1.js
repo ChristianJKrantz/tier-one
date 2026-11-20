@@ -169,7 +169,17 @@ W.chapter({
       key: ['Digital license = reinstall activates without a key', 'OEM key lives in firmware and stays with that PC; retail can transfer', 'Link license to Microsoft account before a motherboard swap', 'KMS = local server; MAK = one-time key', '`slmgr /dlv` shows license details'] },
     { t: 'Multiple OSes and tuning', p: ['You can dual-boot Windows 11 with another Windows version or Linux by installing to separate partitions; the Windows Boot Manager shows a menu at startup. `msconfig` (System Configuration) has a Boot tab to choose the default OS and timeout.',
         'After setup: run Windows Update, check Device Manager for missing drivers, remove unwanted preinstalled apps and confirm activation.'],
-      key: ['Dual boot = separate partitions + boot menu', '`msconfig` Boot tab sets the default OS and timeout'] }
+      key: ['Dual boot = separate partitions + boot menu', '`msconfig` Boot tab sets the default OS and timeout'] },
+    { t: 'Class notes: installing Windows 11', q: 'Can you upgrade 32-bit Windows 10 to Windows 11?',
+      p: ['From the Chapter 2 slides:',
+        '- **Upgrade vs. clean install**: an upgrade keeps apps and files but **can\'t go from 32-bit to 64-bit**; a clean install starts fresh, though compatibility checks (CPU, TPM) still run',
+        '- **Prepare first**: back up **all data for all users** (external drive or cloud), and gather app installers, product keys and sign-ins. A Microsoft account syncs some settings and Store app data',
+        '- **Other requirements on the slides**: Wi-Fi or Ethernet plus Bluetooth, a physical **power button and volume buttons**, at least **one USB and one video port**',
+        '- **Upgrade stages**: compatibility check > fix hang-ups > Windows PE backs up the old install > upgrade folders created > restart > **OOBE**',
+        '- **Clean install from USB**: language/region > product key (or skip) > **Custom** install > choose/create/delete/format/extend partitions (**no shrinking**) > copy and install > profile pages (name, password, personal or organization use, privacy, **security questions**)',
+        '- To skip a Microsoft account, choose the **organization / domain join** option',
+        '- **Activation**: Windows checks that it\'s a genuine copy; it enrolls with Microsoft\'s server and gets a **digital license**, with periodic validation checks'],
+      key: ['No 32-bit to 64-bit upgrade', 'Back up all users first', 'Clean install: Custom, partitions can\'t be shrunk', 'Organization/domain join avoids a Microsoft account'] }
   ],
   cards: [
     ['Windows 11 minimum RAM', '4 GB'],

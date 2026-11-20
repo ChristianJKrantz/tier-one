@@ -296,3 +296,65 @@ W.chapter({
     ['Where would you find the official parameter list for a PowerShell cmdlet?', ['Microsoft Learn', 'Microsoft Store', 'Tips app', 'Feedback Hub'], 0, 'Formerly Docs.', 0, ['', 'Apps, not docs.', 'Too basic.', 'Feedback only.']]
   ]
 });
+
+W.chapter({
+  id: 'cai', num: 'AI', part: 5, title: 'Artificial intelligence and prompting',
+  short: 'AI & prompting', icon: 'spark',
+  blurb: 'The class AI unit: what AI is and how its fields nest, key terms, trends and concerns, Suleyman\'s containment ideas, and how to prompt an AI well. (From the Ch. 1.1-1.3 class slides.)',
+  learn: [
+    { t: 'More AI terms from class', q: 'What\'s the difference between an AI agent and agentic AI?',
+      p: ['- **Agentic AI**: multiple AI agents working **collectively and autonomously** on complex problems; can decide, act and adapt without constant human input',
+        '- **AI agent**: built for a **specific task** with little or no autonomy (customer service, chatbots, calendar/email help)',
+        '- **Backpropagation**: self-correction during training: errors are fed back through the network to adjust **weights and biases**, repeated many times',
+        '- **General AI**: AI that can do a wide range of tasks, like human intelligence',
+        '- **Generative AI**: trained on large datasets to **create new content** (text, images, music, code)',
+        '- **Large Language Models (LLMs)**: trained on massive text; chatbots, translation, speech-to-text, coding',
+        '- **Large Vision Models (LVMs)**: trained on massive visual data; video, robotics, predictive behavior'],
+      key: ['Agentic AI = autonomous teams of agents; AI agent = one specific task', 'Backpropagation adjusts weights and biases from errors', 'LLM = text; LVM = images/video'] },
+    { t: 'Trends: 2025 to 2026', p: ['- **Generative AI** widely adopted (over **50%** adoption globally by 2026)',
+        '- **AI agents as teammates** for multi-step daily work',
+        '- **Edge AI**: running AI on personal devices instead of the cloud, for speed and privacy',
+        '- **Scientific acceleration**: AI as a lab assistant in biology and physics',
+        '- Autonomous vehicles, healthcare and finance keep growing'],
+      key: ['Edge AI = on-device, faster and more private', 'Over half the world has adopted generative AI'] },
+    { t: 'Suleyman three years later', p: ['In early 2026 Mustafa Suleyman (CEO of Microsoft AI) updated his views:',
+        '- **Career changes are imminent**: routine white-collar work (lawyers, accountants, marketers) faces automation by "professional-grade AGI" within 12 to 18 months',
+        '- **Strict red lines**: any model showing **recursive self-improvement, autonomous goal-setting, independent action and resource acquisition** at once must be **shut down immediately**',
+        '- **Rejects machine consciousness**: true awareness is biological; building "seemingly conscious AI" is dangerous',
+        '- **Humanist superintelligence**: a **co-pilot** model that enhances people instead of replacing them'],
+      key: ['Four red-line traits together = shut it down', 'Co-pilot model, not a human replacement'] },
+    { t: 'The four secrets of great prompting', q: 'What four things should every serious prompt include?',
+      p: ['A **prompt** is a call to action for an LLM: programming a prediction engine with words. AI has **no common sense or intuition**; it returns the most statistically likely answer.',
+        '- **Persona**: tell the AI **who to be** and **who it\'s addressing** ("You are a production efficiency consultant...")',
+        '- **Context**: give **every relevant fact**; give it **permission not to know** and tell it **not to guess**',
+        '- **Format**: describe what a good answer looks like (report, chart, lesson plan) and give **examples** to emulate',
+        '- **Chain-of-thought** (extended thinking): ask it to **show its reasoning steps**, which makes hallucinations easier to spot. Related: **tree of thought** (several paths at once) and **adversarial validation** (competing options critique each other)'],
+      key: ['Persona, Context, Format, Chain-of-thought', 'Let the AI say it doesn\'t know', 'Showing reasoning exposes hallucinations'] },
+    { t: 'Asking better questions', p: ['- **Be clear and specific**: precise topic, state your goal, give context ("I\'m a beginner programmer...")',
+        '- **Pick a question type**: direct/factual, hypothetical, comparative, scenario-based, process; add **"Explain like I\'m five"** for simpler answers',
+        '- **Phrase it well**: use keywords, break complex questions down, **avoid ambiguity** (careful with "it" and "they"), use **positive framing**',
+        '- **Iterate**: rephrase, ask for clarification or examples, request another format (table, summary), and **politely challenge** wrong answers with a source',
+        '- **Know the limits**: AI doesn\'t think like a human, can carry **bias**, and can **hallucinate**, so verify with reliable sources',
+        'Tip from class: save chat logs as .txt files (there are browser extensions for it).'],
+      key: ['Specific + goal + context', 'Iterate and challenge with sources', 'Always verify: bias and hallucinations'] }
+  ],
+  cards: [
+    ['Agentic AI vs. AI agent', 'Agentic AI: autonomous agents working together on complex problems. AI agent: one specific task, little autonomy.'],
+    ['What is backpropagation?', 'Feeding training errors back through a network to adjust weights and biases.'],
+    ['LLM vs. LVM', 'Large Language Model (text) vs. Large Vision Model (images/video).'],
+    ['What is edge AI?', 'AI running on the local device instead of the cloud, for speed and privacy.'],
+    ['Four prompting secrets', 'Persona, Context, Format, Chain-of-thought.'],
+    ['Why ask an AI to show its chain of thought?', 'Its reasoning steps make mistakes and hallucinations easier to spot.'],
+    ['Why give an AI "permission not to know"?', 'So it says so instead of guessing and stating the guess as fact.'],
+    ['What does "Explain like I\'m five" do?', 'Asks for a much simpler explanation.'],
+    ['Suleyman\'s four red-line traits', 'Recursive self-improvement, autonomous goal-setting, independent action, resource acquisition.']
+  ],
+  run: [],
+  quiz: [
+    ['"You are a seasoned network engineer explaining VLANs to a new hire." Which prompting secret is this?', ['Format', 'Persona', 'Chain-of-thought', 'Context'], 1, 'Who is the AI being, and for whom?', 3, ['Format describes what the output should look like.', '', 'That asks the AI to show its reasoning.', 'Context is the facts of the situation.']],
+    ['Which request best uses chain-of-thought prompting?', ['Answer in a table', 'Walk me through your reasoning step by step', 'You are a doctor', 'Here are the sales figures'], 1, 'It exposes how the AI reached its answer.', 3, ['That is a format instruction.', '', 'That is a persona.', 'That is context.']],
+    ['A tool that summarizes your email but can\'t act on its own is best called:', ['Agentic AI', 'An AI agent', 'General AI', 'A large vision model'], 1, 'Specific task, little autonomy.', 0, ['That acts autonomously on complex goals.', '', 'That handles a wide range of tasks like a human.', 'That works with images and video.']],
+    ['Why is "What doesn\'t cause anxiety?" a weak question for an AI?', ['It is too short', 'Negative framing makes it ambiguous', 'AI can\'t discuss health', 'It lacks a persona'], 1, 'The slides recommend a kind of framing.', 4, ['Length isn\'t the issue here.', '', 'Not the problem the slides point out.', 'A persona wouldn\'t fix the framing.']],
+    ['Which is an example of edge AI?', ['A chatbot running in a cloud datacenter', 'Speech recognition running on the phone itself', 'A shared server farm', 'An email newsletter'], 1, 'Edge = on the device.', 1, ['That\'s cloud AI.', '', 'Still cloud.', 'Not AI.']]
+  ]
+});

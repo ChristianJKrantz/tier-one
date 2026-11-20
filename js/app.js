@@ -12,6 +12,7 @@
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
   const CH = W.chapters;
+  const chLabel = c => c.part === 4 ? 'Appendix' : c.part === 5 ? 'Unit' : 'Chapter';
 
   // The main site covers everything, including the class review-sheet material: each book chapter gets its
   // Exam prep items (quiz + unit exam topics) as extra lessons and flashcards, and Chapter 18 gets the Linux unit.
@@ -30,6 +31,8 @@
       const c = W.byId('c' + d.num); if (!c) return;
       add(c, `Class review topics (${d.tests.join(' + ')})`, d.terms, `Everything on the NST 115 review sheets for this chapter. Practice it in the Exam prep tab.`);
     });
+    const cai = W.byId('cai');
+    if (cai) COURSE.decks.filter(d => d.kind === 'ai').forEach(d => { add(cai, 'AI test review topics', d.terms, 'Everything on the A.I. test review, from the Ch. 1.1 class slides. Practice it in the Exam prep tab.'); const sec = cai.learn.pop(); cai.learn.unshift(sec); cai.quiz.forEach(q => { q[4] += 1; }); });
     const c18 = W.byId('c18');
     if (c18) COURSE.decks.filter(d => d.kind === 'linux').forEach(d => add(c18, `Linux unit: ${d.title} (${d.sub})`, d.terms, d.note || `From the NST 115 Linux unit. Drill it in the Linux tab.`));
   })();
@@ -133,7 +136,7 @@
     } else {
       const hits = [];
       CH.forEach(c => {
-        if ((c.title + ' ' + c.short + ' ' + c.blurb).toLowerCase().includes(q)) hits.push({ c, label: `${c.num === 'A' || c.num === 'B' || c.num === 'C' ? 'Appendix' : 'Chapter'} ${c.num}: ${c.title}`, href: `#/c/${c.id}` });
+        if ((c.title + ' ' + c.short + ' ' + c.blurb).toLowerCase().includes(q)) hits.push({ c, label: `${chLabel(c)} ${c.num}: ${c.title}`, href: `#/c/${c.id}` });
         c.learn.forEach((s, i) => { if ((s.t + ' ' + s.p.join(' ') + ' ' + (s.key || []).join(' ')).toLowerCase().includes(q)) hits.push({ c, label: s.t, sub: `${c.num} · ${c.short}`, href: `#/c/${c.id}/learn/${i}` }); });
       });
       COURSE.decks.forEach(d => d.terms.forEach(t => { const x = COURSE.terms[t]; if (!hits.some(h => h.href.endsWith('/' + t)) && (x.t + ' ' + x.d).toLowerCase().includes(q)) hits.push({ c: { part: 'c', icon: d.kind === 'linux' ? 'penguin' : 'course' }, label: x.t, sub: d.kind === 'linux' ? `Linux · ${d.title}` : `NST 115 · Chapter ${d.num}: ${d.sub}`, href: `${d.kind === 'linux' ? '#/linux' : '#/course'}/${d.id}/sheet/${t}` }); }));
@@ -193,7 +196,7 @@
   function homeView() {
     setTitle('Tier One', 'logo');
     const r = rank(), due = allDue(), missed = Object.keys(S.missed).length, nx = nextStep();
-    const partsHTML = [1, 2, 3, 4].map(p => `<section class="part"><h2 class="part-h">${esc(W.parts[p])}</h2><div class="tiles">${CH.filter(c => c.part === p).map(c => { const s = stats(c); return `<a class="tile" href="#/c/${c.id}"><span class="tile-ic part${p}">${icon(c.icon)}</span><span class="tile-txt"><small>${/[A-C]/.test(c.num) ? 'Appendix' : 'Chapter'} ${esc(c.num)}</small><b>${esc(c.short)}</b></span>${s.belt >= 80 ? `<span class="stamp" title="Certified (${s.belt}%)">${icon('cert')}</span>` : ''}${ring(s.pct, `${c.short}: ${s.pct}% complete`)}</a>`; }).join('')}</div></section>`).join('');
+    const partsHTML = [1, 2, 3, 4, 5].map(p => `<section class="part"><h2 class="part-h">${esc(W.parts[p])}</h2><div class="tiles">${CH.filter(c => c.part === p).map(c => { const s = stats(c); return `<a class="tile" href="#/c/${c.id}"><span class="tile-ic part${p}">${icon(c.icon)}</span><span class="tile-txt"><small>${chLabel(c)} ${esc(c.num)}</small><b>${esc(c.short)}</b></span>${s.belt >= 80 ? `<span class="stamp" title="Certified (${s.belt}%)">${icon('cert')}</span>` : ''}${ring(s.pct, `${c.short}: ${s.pct}% complete`)}</a>`; }).join('')}</div></section>`).join('');
     app.innerHTML = `<div class="pad home">
       <section class="hero">
         <div class="hero-txt">
@@ -230,7 +233,7 @@
   const MODES = [['learn', 'Learn', 'learn'], ['cards', 'Flashcards', 'cards'], ['run', 'Run drills', 'run'], ['practice', 'Help desk practice', 'ticket'], ['exam', 'Certification', 'cert']];
   function chapterView(c, mode, arg) {
     if (!MODES.some(m => m[0] === mode)) mode = 'learn';
-    const label = /[A-C]/.test(c.num) ? 'Appendix' : 'Chapter';
+    const label = chLabel(c);
     setTitle(`${label} ${c.num}: ${c.short}`, c.icon);
     const s = stats(c), dueN = dueCards(c).length;
     const counts = { learn: `${(S.read[c.id] || []).length}/${c.learn.length}`, cards: dueN ? `${dueN} due` : '', run: c.run.length ? `${c.run.filter((_, i) => S.drills[`${c.id}:${i}`]).length}/${c.run.length}` : '', practice: `${c.quiz.filter((_, i) => S.practice[`${c.id}:${i}`]).length}/${c.quiz.length}`, exam: s.belt >= 80 ? 'Certified' : s.belt ? `${s.belt}%` : '' };
@@ -477,7 +480,7 @@
         body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Exam results</h2></div>
           <div class="card result ${pass ? 'pass' : 'fail'}">
             ${seal(pass, pass ? 'stampin' : '')}
-            <div><p class="score">${score}%</p><p><b>${pass ? (firstPass ? `${/[A-C]/.test(c.num) ? 'Appendix' : 'Chapter'} ${esc(c.num)}: certified!${rank().n === RANKS.find(x => x[0] === rank().name)[1] && rank().idx > 0 ? ` Promoted to ${rank().name}.` : ''}` : 'Passed again. Still certified.') : 'Not yet. You need 80%.'}</b></p><p class="muted">${results.length - missed.length} of ${results.length} correct${pass ? '' : '. Review the sections below, practice, and try again.'}</p></div>
+            <div><p class="score">${score}%</p><p><b>${pass ? (firstPass ? `${chLabel(c)} ${esc(c.num)}: certified!${rank().n === RANKS.find(x => x[0] === rank().name)[1] && rank().idx > 0 ? ` Promoted to ${rank().name}.` : ''}` : 'Passed again. Still certified.') : 'Not yet. You need 80%.'}</b></p><p class="muted">${results.length - missed.length} of ${results.length} correct${pass ? '' : '. Review the sections below, practice, and try again.'}</p></div>
           </div>
           ${missed.length ? `<div class="card missed"><h3>Review these</h3><ul>${missed.map(r => r.it.t === 'q' ? `<li><p>${md(c.quiz[r.it.qi][0])}</p><p class="hint-line">${icon('bulb')}${md(c.quiz[r.it.qi][3])}</p><a href="#/c/${c.id}/learn/${c.quiz[r.it.qi][4]}">${icon('learn')}Reread: ${esc(c.learn[c.quiz[r.it.qi][4]].t)}</a></li>` : `<li><p>Command: ${md(c.run[r.it.ri][0])}</p><p class="hint-line">${icon('bulb')}${md(c.run[r.it.ri][2])}</p><a href="#/c/${c.id}/run">${icon('run')}Practice in Run drills</a></li>`).join('')}</ul></div>` : ''}
           <div class="row"><a class="btn" href="#/c/${c.id}/exam" data-act="retake">Retake</a>${pass && CH[CH.indexOf(c) + 1] ? `<a class="btn primary" href="#/c/${CH[CH.indexOf(c) + 1].id}">Next chapter ${icon('arrow')}</a>` : `<a class="btn primary" href="#/c/${c.id}/practice">${icon('ticket')}Practice</a>`}</div></div>`;
@@ -572,7 +575,7 @@
   const srcTag = s => s === 'class' ? 'Class materials' : s === 'gen' ? 'General knowledge: check your notes' : `Book ch. ${s.slice(1)}`;
   const deckById = id => CO.decks.find(d => d.id === id);
   const base = d => d.kind === 'linux' ? '#/linux' : '#/course';
-  const dIcon = d => d.kind === 'linux' ? 'penguin' : 'course';
+  const dIcon = d => d.kind === 'linux' ? 'penguin' : d.kind === 'ai' ? 'spark' : 'course';
   const onChips = id => (CO.on[id] || []).map(l => `<span class="onchip ${/Unit/.test(l) ? 'unit' : /slides/.test(l) ? 'slides' : ''}">${esc(l)}</span>`).join('');
   const DMODES = [['sheet', 'Review sheet', 'learn'], ['flash', 'Flash review', 'cards'], ['exam', 'Practice exam', 'ticket']];
   function courseView(id, mode, arg) {
@@ -585,11 +588,11 @@
     const best = cS().best[d.id];
     app.innerHTML = `<div class="chap">
       <nav class="cnav" aria-label="Review sections">
-        <div class="cnav-head"><span class="cnav-ic ${d.kind}">${d.kind === 'chapter' ? `<span class="cnum">${d.num}</span>` : icon('penguin')}</span><div><small>${d.kind === 'chapter' ? esc((d.tests || []).join(' + ')) : 'Linux unit'}</small><b>${esc(d.kind === 'chapter' ? d.sub : `${d.title}: ${d.sub}`)}</b></div></div>
+        <div class="cnav-head"><span class="cnav-ic ${d.kind}">${d.kind === 'chapter' ? `<span class="cnum">${d.num}</span>` : icon(dIcon(d))}</span><div><small>${d.kind === 'chapter' ? esc((d.tests || []).join(' + ')) : d.kind === 'ai' ? 'AI test review' : 'Linux unit'}</small><b>${esc(d.kind === 'chapter' ? d.sub : `${d.title}: ${d.sub}`)}</b></div></div>
         <ul class="modes">${DMODES.map(m => `<li><a href="${base(d)}/${d.id}/${m[0]}" class="${m[0] === mode ? 'on' : ''}" ${m[0] === mode ? 'aria-current="page"' : ''}>${icon(m[2])}<span>${m[1]}</span><em>${m[0] === 'sheet' ? `${deckPct(d)}%` : m[0] === 'exam' && best !== undefined ? `best ${best}%` : ''}</em></a></li>`).join('')}
           ${d.perms ? `<li><a href="#/linux/perms">${icon('lock')}<span>Permissions trainer</span></a></li>` : ''}${d.kind === 'linux' ? `<li><a href="#/linux/terminal">${icon('term')}<span>Terminal drills</span></a></li>` : ''}</ul>
         ${mode === 'sheet' ? `<ol class="secs">${d.terms.map(t => `<li><a href="${base(d)}/${d.id}/sheet/${t}" class="${mastered(t) ? 'done' : ''}">${esc(CO.terms[t].t)}</a></li>`).join('')}</ol>` : ''}
-        <div class="cnav-foot"><a href="${base(d)}">${icon('back')}${d.kind === 'linux' ? 'Linux unit' : 'All chapters'}</a></div>
+        <div class="cnav-foot"><a href="${base(d)}">${icon('back')}${d.kind === 'linux' ? 'Linux unit' : 'Exam prep'}</a></div>
       </nav><div class="cbody" id="cbody"></div></div>`;
     const body = $('#cbody');
     ({ sheet: sheetMode, flash: flashMode, exam: cExamMode })[mode](d, body, arg);
@@ -598,9 +601,10 @@
     setTitle('NST 115 exam prep', 'course');
     const units = [1, 2, 3, 4];
     app.innerHTML = `<div class="pad">
-      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep by chapter</h2><p class="muted">Each chapter combines everything from its <b>quiz review</b> and its part of the <b>unit exam review</b>, answered from the textbook and your class materials. Badges show which test each item is on. The <a href="#linux-unit">Linux unit</a> is at the bottom, kept separate from the Windows chapters.</p></div>
+      <div class="mode-head"><p class="eyebrow">NST 115 · System Maintenance</p><h2>Exam prep by chapter</h2><p class="muted">Each chapter combines everything from its <b>quiz review</b> and its part of the <b>unit exam review</b>, answered from the textbook and your class materials. Badges show which test each item is on. The <b>AI unit</b> and <a href="#linux-unit">Linux unit</a> are at the bottom, kept separate from the Windows chapters.</p></div>
       ${units.map(u => { const ds = CO.decks.filter(d => d.kind === 'chapter' && d.unit === u); return `<h3 class="part-h">Chapters ${ds[0].num}-${ds[ds.length - 1].num} <span class="muted">· Unit Exam ${u}</span></h3><div class="tiles chtiles">${ds.map(chTile).join('')}</div>`; }).join('')}
       <h3 class="part-h">Chapters 13-14</h3><div class="tiles chtiles">${CO.decks.filter(d => d.kind === 'chapter' && !d.unit).map(chTile).join('')}</div>
+      <h3 class="part-h linux-h ai-h">${icon('spark')}AI unit <span class="muted">· AI test review</span></h3><div class="tiles">${CO.decks.filter(d => d.kind === 'ai').map(d => { const p = deckPct(d), b = cS().best[d.id]; return `<a class="tile deck" href="#/course/${d.id}"><span class="tile-ic ai">${icon('spark')}</span><span class="tile-txt"><small>${esc(d.sub)} · ${d.terms.length} items</small><b>${esc(d.title)}</b>${b !== undefined ? `<small>Practice exam best ${b}%</small>` : ''}</span>${ring(p, `AI unit: ${p}% mastered`)}</a>`; }).join('')}</div>
       <h3 class="part-h linux-h" id="linux-unit">${icon('penguin')}Linux unit <span class="muted">· also on the exam</span></h3><div class="tiles linuxtiles">${linuxTiles()}</div>
       <p class="fine">Answers tagged <b>Book ch.</b> come from <i>Windows 11 Inside Out</i>; <b>Class materials</b> from your slides, handouts, the assigned article and video; <b>General knowledge</b> items aren't covered in either, so compare them with your notes. Progress is saved in this browser.</p></div>`;
   }

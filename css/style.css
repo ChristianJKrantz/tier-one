@@ -499,3 +499,6 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .prose h3.sub:first-of-type { border-top: 0; padding-top: 0; }
 .linux-h { display: flex; align-items: center; gap: 8px; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--stroke); scroll-margin-top: 16px; }
 .linux-h .ic { color: #3a8a3a; }
+.tile-ic.ai, .cnav-ic.ai { background: #8a4fd6; }
+.ai-h .ic { color: #8a4fd6; }
+.part5 { background: #8a4fd6; }

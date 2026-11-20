@@ -7,7 +7,7 @@ require('../js/content-1.js'); require('../js/content-2.js'); require('../js/con
 const norm = s => String(s).toLowerCase().replace(/\s+/g, ' ').trim();
 let fails = 0;
 const check = (ok, msg) => { if (!ok) { fails++; console.error('FAIL', msg); } };
-check(W.chapters.length === 23, `expected 23 chapters/appendixes, got ${W.chapters.length}`);
+check(W.chapters.length === 24, `expected 24 chapters/appendixes, got ${W.chapters.length}`);
 const ids = new Set();
 W.chapters.forEach(c => {
   check(!ids.has(c.id), `${c.id} duplicate id`); ids.add(c.id);

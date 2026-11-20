@@ -24,8 +24,9 @@ Works in any modern browser on desktop, tablet or phone. No install, no account,
 | **II · Managing Windows 11** | 9 File Explorer · 10 Accounts & sign-in · 11 Networking · 12 Security & privacy · 13 Hardware & drivers · 14 Performance & power · 15 Troubleshoot & recover |
 | **III · For IT pros** | 16 Terminal, PowerShell & registry · 17 Virtual machines · 18 Android & Linux · 19 Enterprise management |
 | **IV · Appendixes** | A Editions & licensing · B Windows Insider · C Help & support |
+| **V · Class units** | AI & prompting |
 
-Plus a **Chapter 0** (what an operating system is) from the class slides. That adds up to **123 lessons**, **244 flashcards**, **78 command drills** and **132 questions and help desk tickets**.
+Plus a **Chapter 0** (what an operating system is) from the class slides. That adds up to **129 lessons**, **253 flashcards**, **78 command drills** and **137 questions and help desk tickets** (before the class review topics are added to each chapter).
 
 ---
 
@@ -51,6 +52,9 @@ The main site covers **all** of the material, including everything on the class 
 A separate tab (graduation-cap icon on the taskbar) built from the NST 115 review sheets, **organized by chapter only**:
 - **Chapters 1-14**: each chapter combines its quiz review (Quizzes 1-14) and its part of the unit exam review (Unit Exams 1-4). Every item is answered from the textbook and class materials, with badges showing which test it's on (**Quiz 8**, **Unit Exam 3**) and a source tag (book chapter, class materials, or general knowledge to check against notes)
 - **Review sheet** with Recall mode (answers hidden until you've said them), **Flash review**, and a **Practice exam** that tells you what a wrong pick actually is but never reveals the right one
+
+### AI unit
+The AI test review appears in Exam prep as its own section, answered from the class AI slides. The prompting material (not on the review) lives in the main site's **AI & prompting** unit.
 
 ### Linux unit
 The Linux unit is on the exam, so it appears in the Exam prep tab as its own section below the Windows chapters, and also has its own tab (penguin icon): Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers).

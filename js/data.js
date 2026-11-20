@@ -7,7 +7,8 @@ const W = {
     1: 'Part I · Windows essentials',
     2: 'Part II · Managing Windows 11',
     3: 'Part III · For IT pros & experts',
-    4: 'Part IV · Appendixes'
+    4: 'Part IV · Appendixes',
+    5: 'Part V · Class units'
   },
   chapter(c) {
     const problems = [];
