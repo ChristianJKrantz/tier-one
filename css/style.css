@@ -494,3 +494,4 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .onchip.unit { background: var(--accent-bg); color: var(--accent); }
 .chtiles { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 .tiles + .part-h { margin-top: 20px; }
+.onchip.slides { background: var(--good-bg); color: var(--good); }

@@ -195,7 +195,7 @@ with sync_playwright() as p:
     # NST 115 exam prep tab: chapters only; Linux is its own tab
     page.goto(URL + '#/course')
     page.wait_for_selector('.chtiles .tile')
-    check(page.locator('.chtiles .tile').count() == 14, 'exam prep lists 14 chapters')
+    check(page.locator('.chtiles .tile').count() == 15, 'exam prep lists chapters 0-14')
     check('Linux Day' not in page.inner_text('#app'), 'no Linux decks mixed into the chapter list')
     shot(page, 'course.png')
     page.goto(URL + '#/course/ch8/sheet')

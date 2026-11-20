@@ -552,7 +552,7 @@
   const deckById = id => CO.decks.find(d => d.id === id);
   const base = d => d.kind === 'linux' ? '#/linux' : '#/course';
   const dIcon = d => d.kind === 'linux' ? 'penguin' : 'course';
-  const onChips = id => (CO.on[id] || []).map(l => `<span class="onchip ${/Unit/.test(l) ? 'unit' : ''}">${esc(l)}</span>`).join('');
+  const onChips = id => ((CO.on[id] || []).length ? CO.on[id] : ['Class slides']).map(l => `<span class="onchip ${/Unit/.test(l) ? 'unit' : /slides/.test(l) ? 'slides' : ''}">${esc(l)}</span>`).join('');
   const DMODES = [['sheet', 'Review sheet', 'learn'], ['flash', 'Flash review', 'cards'], ['exam', 'Practice exam', 'ticket']];
   function courseView(id, mode, arg) {
     if (id === 'terminal') return terminalView();
@@ -584,7 +584,7 @@
   }
   function chTile(d) {
     const p = deckPct(d), b = cS().best[d.id];
-    return `<a class="tile deck" href="#/course/${d.id}"><span class="tile-ic chapter"><span class="cnum">${d.num}</span></span><span class="tile-txt"><small>Chapter ${d.num} · ${d.terms.length} items</small><b>${esc(d.sub)}</b><span class="tchips">${(d.tests || []).map(t => `<span class="onchip ${/Unit/.test(t) ? 'unit' : ''}">${esc(t)}</span>`).join('')}</span>${b !== undefined ? `<small>Practice exam best ${b}%</small>` : ''}</span>${ring(p, `${d.sub}: ${p}% of items mastered`)}</a>`;
+    return `<a class="tile deck" href="#/course/${d.id}"><span class="tile-ic chapter"><span class="cnum">${d.num}</span></span><span class="tile-txt"><small>Chapter ${d.num} · ${d.terms.length} items</small><b>${esc(d.sub)}</b><span class="tchips">${(d.tests || []).map(t => `<span class="onchip ${/Unit/.test(t) ? 'unit' : /slides/.test(t) ? 'slides' : ''}">${esc(t)}</span>`).join('')}</span>${b !== undefined ? `<small>Practice exam best ${b}%</small>` : ''}</span>${ring(p, `${d.sub}: ${p}% of items mastered`)}</a>`;
   }
   function linuxHome() {
     setTitle('Linux unit', 'penguin');
