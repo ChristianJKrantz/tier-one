@@ -502,3 +502,11 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .tile-ic.ai, .cnav-ic.ai { background: #8a4fd6; }
 .ai-h .ic { color: #8a4fd6; }
 .part5 { background: #8a4fd6; }
+
+.todo[href="#/review/reopened"]{border-inline-start:3px solid var(--p4)}
+@media(max-width:600px){
+  .pivot{flex-wrap:wrap}
+  .pivot a,.run-row .btn{min-height:44px}
+  .run-row{flex-wrap:wrap}
+  .term-line input{font-size:16px;min-width:0}
+}
