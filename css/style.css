@@ -510,3 +510,5 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
   .run-row{flex-wrap:wrap}
   .term-line input{font-size:16px;min-width:0}
 }
+
+@media(max-width:600px){.opt{min-height:44px}.tk-q{overflow-wrap:break-word}}
