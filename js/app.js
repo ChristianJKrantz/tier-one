@@ -200,9 +200,9 @@
     app.innerHTML = `<div class="pad home">
       <section class="hero">
         <div class="hero-txt">
-          <p class="eyebrow">Windows 11, chapter by chapter</p>
-          <h2 class="hero-h">Start at the help desk. Work your way up.</h2>
-          <p class="lead">Every chapter is a ticket queue: learn it, drill the commands, work the tickets, then pass the certification exam. Each certification moves you up the support ladder from Trainee to IT Lead. Hints point you to the answer. They never just hand it over.</p>
+          <p class="eyebrow">Windows 11 · Help desk training</p>
+          <h2 class="hero-h">Your support desk.</h2>
+          <p class="lead">Pick up your next lesson, resolve a support ticket, or review a missed question. Pass chapter exams to move up the support ladder.</p>
           <div class="hero-act">${nx ? `<a class="btn primary" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}Continue: ${esc(nx.c.num)} · ${esc(nx.label)}</a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Fully certified! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button></div>
         </div>
         <div class="rankcard">

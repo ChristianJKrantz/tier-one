@@ -512,3 +512,16 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 }
 
 @media(max-width:600px){.opt{min-height:44px}.tk-q{overflow-wrap:break-word}}
+
+@media screen {
+.wallpaper{background:#292442}.wallpaper::after{background:repeating-linear-gradient(145deg,transparent 0 32px,#8778cd12 32px 33px)}
+.win{background:var(--mica-solid);border-radius:18px;box-shadow:0 14px 50px #100d2e60}.titlebar{background:#31234e;color:#f7f2ff;border-bottom:none;height:48px}.titlebar .tb-btn{color:#fff}.tb-title{font-weight:650}.titlebar .identity{width:30px;height:30px;border-radius:7px}.titlebar #tbicon{display:none}
+.home .hero{gap:0;background:#42287a;border-radius:18px;overflow:hidden;border:1px solid #54398b;color:white}.home .hero-txt{padding:clamp(22px,3vw,42px);align-self:center}
+.home .hero-h{font-size:clamp(32px,4.4vw,58px);line-height:1.04;letter-spacing:-.055em;color:white}
+.home .eyebrow{color:#e4d7ff}.home .lead{color:#ede7fa;max-width:48ch;font-size:16px}
+.hero-act .btn{background:#513a85;border-color:#a896c9;color:white}.hero-act .btn.primary{background:#d8ff95;color:#243410;border-color:#d8ff95}
+.home .rankcard{border:0;border-radius:0;box-shadow:none;background:repeating-linear-gradient(-48deg,transparent 0 19px,#ffffff08 19px 21px),#34245f;padding:22px}.rankcard .idbadge{color:var(--text);transform:rotate(3deg);box-shadow:0 8px 20px #190a3a44}.rankcard .muted,.rankcard .statrow small{color:#e2d7f5}.rankcard .statrow b{color:#fff}
+.home .coursebanner{background:#302347;color:white;border-radius:12px}.home .todo{border-radius:12px}.home .part-h{letter-spacing:-.025em}.tile{border-radius:12px}
+.ticket{border:1px solid var(--stroke2);border-left:4px solid #9362c8;border-radius:14px}.tk-q{font-size:clamp(20px,2.4vw,28px);letter-spacing:-.035em}
+@media(max-width:700px){.win{border-radius:0}.home .hero{grid-template-columns:1fr}.home .hero-txt{padding:22px 19px}.home .rankcard{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;text-align:start;align-items:center;padding:12px 16px}.home .rankcard .idbadge{grid-row:span 2;zoom:.70}.home .rankcard>.muted{margin:0!important}.home .rankcard .statrow{width:100%;margin:0}.home .hero-act{gap:6px}.home .hero-act .btn{min-height:44px}}
+}
