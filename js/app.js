@@ -748,11 +748,17 @@
       app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Permissions trainer</h2><p class="muted">Convert between <code>ls -l</code> permission strings and <code>chmod</code> numbers. <b>r = 4, w = 2, x = 1</b>, added up for user, group and others. Streak: <b>${streak}</b></p></div>
         <div class="term card"><div class="term-task">${toOct ? `What number gives <code class="big">-${str}</code> ?` : `What does <code class="big">chmod ${oct.join('')}</code> look like in <code>ls -l</code>? (9 characters, skip the type)`}</div>
         <form class="term-line" id="pform" autocomplete="off"><label for="pin" class="prompt">${toOct ? 'chmod' : '-'}</label><input id="pin" type="text" spellcheck="false" autocapitalize="off" maxlength="${toOct ? 3 : 10}"></form><div class="term-out" id="pout" aria-live="polite"></div></div>
-        <div class="row run-row"><button class="btn" type="button" id="phint">${icon('bulb')}Hint</button><button class="btn ghost" type="button" id="pnew">New one</button></div></div>`;
+        <div class="row run-row"><button class="btn" type="submit" id="pcheck" form="pform">Check answer</button><button class="btn" type="button" id="phint">${icon('bulb')}Hint</button><button class="btn ghost" type="button" id="pnew">New one</button></div></div>`;
       const inp = $('#pin'); inp.focus();
       $('#pform').onsubmit = e => {
-        e.preventDefault(); let v = inp.value.trim(); if (!toOct && v.length === 10) v = v.slice(1); if (!v) return;
-        if (v === ans) { streak++; addXP(hints ? 1 : 3); $('#pout').innerHTML = '<span class="ok">✓ Correct.</span>'; setTimeout(draw, 700); }
+        e.preventDefault(); if (inp.readOnly) return; let v = inp.value.trim(); if (!toOct && v.length === 10) v = v.slice(1); if (!v) return;
+        if (v === ans) {
+          inp.readOnly = true;
+          streak++; addXP(hints ? 1 : 3);
+          $('#pout').innerHTML = '<span class="ok">✓ Correct.</span>';
+          $('#pcheck').hidden = true; $('#phint').disabled = true;
+          const next = $('#pnew'); next.textContent = 'Next question'; next.onclick = draw; next.focus();
+        }
         else {
           streak = 0; const parts = toOct ? v.split('') : [v.slice(0, 3), v.slice(3, 6), v.slice(6, 9)], who = ['user', 'group', 'others'];
           const bad = who.filter((_, i) => (toOct ? +parts[i] !== oct[i] : parts[i] !== sym(oct[i])));
