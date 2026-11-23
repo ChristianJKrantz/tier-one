@@ -203,7 +203,7 @@
           <p class="eyebrow">Windows 11 · Help desk training</p>
           <h2 class="hero-h">Your support desk.</h2>
           <p class="lead">Pick up your next lesson, resolve a support ticket, or review a missed question. Pass chapter exams to move up the support ladder.</p>
-          <div class="hero-act">${nx ? `<a class="btn primary" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}Continue: ${esc(nx.c.num)} · ${esc(nx.label)}</a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Fully certified! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button></div>
+          <div class="hero-act">${nx ? `<a class="btn primary" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}Continue: ${esc(nx.c.num)} · ${esc(nx.label)}</a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Fully certified! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button>${missed ? `<a class="btn" href="#/review/reopened">${icon('ticket')}Retry ${plural(missed, 'ticket')}</a>` : ''}</div>
         </div>
         <div class="rankcard">
           ${idBadge(r)}

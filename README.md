@@ -1,4 +1,10 @@
+<img align="right" src="icon-192.png" alt="" width="64" height="64">
+
 # Tier One
+
+## About
+
+The violet support desk groups Windows study material into lessons, command drills and tickets. The dashboard offers a direct **Retry** action whenever you have reopened tickets.
 
 **Windows 11 help desk training, chapter by chapter. Start at Tier 1 and work your way up. Hints point the way, but you find every answer yourself.**
 
