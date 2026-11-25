@@ -6,7 +6,7 @@
 
 The violet support desk groups Windows study material into lessons, command drills and tickets. The dashboard offers a direct **Retry** action whenever you have reopened tickets.
 
-**Windows 11 help desk training, chapter by chapter. Start at Tier 1 and work your way up. Hints point the way, but you find every answer yourself.**
+**Windows 11 help desk training, chapter by chapter. Start at Tier 1 and work your way up. Hints point the way, and you find the answer yourself. If you're still stuck after two tries, the answer is shown so the miss teaches you something.**
 
 Tier One turns all 19 chapters and 3 appendixes of *Windows 11 Inside Out* into a training course built like a Windows 11 desktop. You start as a **Trainee** at the help desk. Each chapter is a ticket queue with short lessons, spaced-repetition flashcards, Run-box command drills, help desk tickets and a certification exam. Pass a chapter's exam to get certified in it, and every certification moves you up the support career ladder:
 
@@ -36,16 +36,16 @@ Plus a **Chapter 0** (what an operating system is) from the class slides. That a
 
 ---
 
-## No answers handed out
+## Answers you earn
 
-Every study mode follows one rule: **the site never shows you the right answer.** It tells you why a choice misses, gives you a hint, and links you back to the lesson.
+Every study mode follows one rule: **you find the answer yourself first.** A wrong try tells you why it misses, gives you a hint, and links you back to the lesson. Only after **two misses** does it show the right answer, with the idea behind it, and even then you pick it or type it in yourself. It doesn't count as solved, and the item comes back in Review until you get it on the first try. Seeing the answer after a real attempt is one of the most reliable ways to fix a wrong idea, so a miss always ends with you knowing the right one. Exams never reveal anything.
 
 | Mode | How it works |
 |---|---|
 | **Learn** | Short lessons that start with a *Think first* question, flag a *Common trap*, and finish with a *Lock it in* summary. Turn on **Recall mode** to cover the summary and test yourself line by line. |
 | **Flashcards** | Say your answer, flip the card, then rate yourself. **Forgot** brings the card back this session, **Shaky** brings it back tomorrow, and **Knew it** moves it up a box (1, 3, 7, 14, 30 and then 60 days). |
-| **Run drills** | A Run dialog asks for the tool or command, such as `devmgmt.msc`, `ipconfig /flushdns` or `Get-Service`. A wrong entry gets "Windows can't find…". Two hints narrow it down without spelling it out, and **Skip** moves the drill to the back of the line. |
-| **Help desk practice** | Ticket-style scenarios. A wrong pick is crossed out with the reason it misses and a link to the section to reread. The right option is only marked once *you* pick it. |
+| **Run drills** | A Run dialog asks for the tool or command, such as `devmgmt.msc`, `ipconfig /flushdns` or `Get-Service`. A wrong entry gets "Windows can't find…". Two hints narrow it down without spelling it out. After both hints and two more misses, the command is shown and you type it. **Skip** moves the drill to the back of the line. |
+| **Help desk practice** | Ticket-style scenarios. A wrong pick is crossed out with the reason it misses and a link to the section to reread. After a second miss, the right option is outlined with the idea behind it, and you pick it yourself. It stays in Reopened tickets until you solve it on the first try. |
 | **Certification exam** | Every question plus up to three typed commands, with no hints. Score 80% to get certified and move toward your next promotion. The results list your misses, each with a hint and the section to reread, but not the answer. |
 
 <img src="docs/ticket.png" alt="A help desk ticket with one wrong pick crossed out, the reason it misses, a reread link and a hint" width="720">
@@ -63,7 +63,7 @@ A separate tab (graduation-cap icon on the taskbar) built from the NST 115 revie
 The AI test review appears in Exam prep as its own section, answered from the class AI slides. The prompting material (not on the review) lives in the main site's **AI & prompting** unit.
 
 ### Linux unit
-The Linux unit is on the exam, so it appears in the Exam prep tab as its own section below the Windows chapters, and also has its own tab (penguin icon): Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive, hints only) and an endless **Permissions trainer** (rwx ⇄ chmod numbers).
+The Linux unit is on the exam, so it appears in the Exam prep tab as its own section below the Windows chapters, and also has its own tab (penguin icon): Days 1-3 (what Linux is, permissions, scripting), the top 25 commands, **Terminal drills** (case-sensitive; hints first, then the command after two more misses) and an endless **Permissions trainer** (rwx ⇄ chmod numbers).
 
 <img src="docs/course.png" alt="NST 115 exam prep: chapters 1 to 14 with Quiz and Unit Exam badges" width="720">
 

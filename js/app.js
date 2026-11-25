@@ -203,7 +203,7 @@
           <p class="eyebrow">Windows 11 · Help desk training</p>
           <h2 class="hero-h">Your support desk.</h2>
           <p class="lead">Pick up your next lesson, resolve a support ticket, or review a missed question. Pass chapter exams to move up the support ladder.</p>
-          <div class="hero-act">${nx ? `<a class="btn primary" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}Continue: ${esc(nx.c.num)} · ${esc(nx.label)}</a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Fully certified! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button>${missed ? `<a class="btn" href="#/review/reopened">${icon('ticket')}Retry ${plural(missed, 'ticket')}</a>` : ''}</div>
+          <div class="hero-act">${nx ? `<a class="btn primary nextbtn" href="#/c/${nx.c.id}/${nx.mode}">${icon('arrow')}<span><small>Next · ${esc(chLabel(nx.c))} ${esc(nx.c.num)} · ${esc(nx.label)}</small>${esc(nx.c.short)}</span></a>` : `<a class="btn primary" href="#/rush">${icon('rush')}Fully certified! Try Run Rush</a>`}<button class="btn" type="button" data-act="openstart">${icon('search')}Find a topic</button>${missed ? `<a class="btn" href="#/review/reopened">${icon('ticket')}Retry ${plural(missed, 'ticket')}</a>` : ''}</div>
         </div>
         <div class="rankcard">
           ${idBadge(r)}
@@ -342,7 +342,7 @@
     let order = c.run.map((_, i) => i).filter(i => !S.drills[`${c.id}:${i}`]);
     if (!order.length) order = c.run.map((_, i) => i);
     let pos = 0, hints = 0, wrong = 0, solved = 0;
-    const head = `<div class="mode-head"><h2>Run drills</h2><p class="muted">Type the command you'd use in the Run box (Windows key+R) or a terminal. Capitals don't matter. Hints narrow it down, but nobody types it for you.</p></div>`;
+    const head = `<div class="mode-head"><h2>Run drills</h2><p class="muted">Type the command you'd use in the Run box (Windows key+R) or a terminal. Capitals don't matter. Hints narrow it down. If you're still stuck after both hints and two more tries, the command is shown and you type it yourself.</p></div>`;
     function draw() {
       if (pos >= order.length) {
         const total = c.run.filter((_, i) => S.drills[`${c.id}:${i}`]).length;
@@ -358,7 +358,7 @@
       const i = order[pos], r = c.run[i];
       if (b.dataset.act === 'hint') {
         hints = Math.min(2, hints + 1);
-        $('#runfb').innerHTML = `<div class="hint">${icon('bulb')}<p><b>Hint ${hints}:</b> ${md(r[1 + hints])}</p></div>${hints === 2 ? '<p class="muted small">That\'s every hint. Still stuck? Skip it and reread the lesson. It will be here when you get back.</p>' : ''}`;
+        $('#runfb').innerHTML = `<div class="hint">${icon('bulb')}<p><b>Hint ${hints}:</b> ${md(r[1 + hints])}</p></div>${hints === 2 ? '<p class="muted small">That\'s every hint. Still stuck after two more tries, the command is shown so you can type it. Or skip it and reread the lesson.</p>' : ''}`;
         if (hints === 2) b.disabled = true;
         $('#runin').focus();
       }
@@ -381,6 +381,8 @@
       } else {
         wrong++; inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
         $('#runfb').innerHTML = `<div class="bad-fb">${icon('x')}<p><b>Windows can't find "${esc(val.trim())}".</b> ${wrong >= 2 && hints < 2 ? 'Try a hint.' : 'Check the spelling and the switches.'}</p></div>`;
+        // two misses after every hint: show the command, then you type it yourself (it doesn't count as first try)
+        if (wrong >= 2 && hints >= 2) $('#runfb').insertAdjacentHTML('beforeend', `<div class="reveal-fb">${icon('bulb')}<p><b>Here's the command:</b> <code class="mono">${esc((Array.isArray(r[1]) ? r[1] : r[1].split('|'))[0])}</code>. Type it in to open it. It stays on your list until you get it on the first try.</p></div>`);
         inp.select();
       }
     };
@@ -425,6 +427,12 @@
         S.missed[k] = true; save();
         const sec = c.learn[q[4]];
         $('#tkfb', host).innerHTML = `<div class="bad-fb">${icon('x')}<p><b>Not this one.</b> ${md(q[5][oi] || 'That doesn\'t fit this situation.')}</p></div><p class="reread">${icon('learn')}Reread: <a href="#/c/${c.id}/learn/${q[4]}">${esc(sec.t)}</a></p>`;
+        // two misses: show the answer and the idea behind it, so the miss teaches something. You still pick it
+        // yourself, it doesn't count as solved on the first try, and the ticket stays reopened for a later rematch.
+        if (wrong >= 2) {
+          const rb = $(`.opt[data-o="${q[2]}"]`, host); if (rb) rb.classList.add('reveal');
+          $('#tkfb', host).insertAdjacentHTML('beforeend', `<div class="reveal-fb">${icon('bulb')}<p><b>Here's the answer:</b> ${md(q[1][q[2]])}<br><span class="muted">${md(q[3])}</span><br>Pick it to close the ticket. It will come back in Review so you can solve it cold.</p></div>`);
+        }
       }
     }
     host.onclick = e => {
@@ -438,7 +446,7 @@
     draw();
   }
   function practiceMode(c, body) {
-    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Help desk practice</h2><p class="muted">Real-world tickets and questions. A wrong pick tells you <i>why</i> it misses and which section to reread, never which one is right. Keys 1 to 4 pick an answer.</p></div><div id="prac"></div></div>`;
+    body.innerHTML = `<div class="pad"><div class="mode-head"><h2>Help desk practice</h2><p class="muted">Real-world tickets and questions. A wrong pick tells you <i>why</i> it misses and which section to reread. After two misses the right one is shown, and you still pick it yourself. Keys 1 to 4 pick an answer.</p></div><div id="prac"></div></div>`;
     const items = shuffle(c.quiz.map((_, qi) => ({ c, qi })));
     practiceRunner($('#prac'), items, { done: () => { const n = c.quiz.filter((_, i) => S.practice[`${c.id}:${i}`] === 'first').length; return `<div class="empty card">${icon('ticket')}<h3>Queue cleared</h3><p class="muted">${n}/${c.quiz.length} solved on the first try${n === c.quiz.length ? '. You\'re ready for the certification exam.' : '. Missed tickets reopen in Review.'}</p><div class="row"><button class="btn" type="button" data-act="restart">Shuffle and go again</button><a class="btn primary" href="#/c/${c.id}/exam">${icon('cert')}Certification exam</a></div></div>`; } });
   }
@@ -717,7 +725,7 @@
     const draw = () => {
       if (pos >= order.length) { app.innerHTML = `<div class="pad"><div class="empty card">${icon('check')}<h3>${solved}/${items.length} solved</h3><p class="muted">Run through them again until every one is automatic.</p><div class="row"><a class="btn primary" href="#/linux/terminal" id="tagain">Again</a><a class="btn" href="#/linux">Linux unit</a></div></div></div>`; $('#tagain').onclick = e => { e.preventDefault(); terminalView(); }; return; }
       const r = items[order[pos]]; hints = 0; wrong = 0;
-      app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Terminal drills</h2><p class="muted">Type the Linux command. <b>Case matters</b>, just like in a real terminal. Hints narrow it down; no answers given.</p></div><div class="dots">${order.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>
+      app.innerHTML = `<div class="pad"><div class="mode-head"><h2>Terminal drills</h2><p class="muted">Type the Linux command. <b>Case matters</b>, just like in a real terminal. Hints narrow it down. After both hints and two more misses, the command is shown and you type it in.</p></div><div class="dots">${order.map((_, k) => `<i class="${k < pos ? 'on' : k === pos ? 'cur' : ''}"></i>`).join('')}</div>
         <div class="term card"><div class="term-task">${esc(r[0])}</div><form class="term-line" id="tform" autocomplete="off"><label for="tin" class="prompt">student@ubuntu:~$</label><input id="tin" type="text" spellcheck="false" autocapitalize="off" autocorrect="off"></form><div class="term-out" id="tout" aria-live="polite"></div></div>
         <div class="row run-row"><button class="btn" type="button" id="thint">${icon('bulb')}Hint</button><button class="btn ghost" type="button" id="tskip">Skip for now</button></div></div>`;
       const inp = $('#tin'); inp.focus();
@@ -729,7 +737,7 @@
           addXP(!wrong && !hints ? 5 : 2);
         } else {
           wrong++; const cmd = v.split(' ')[0];
-          $('#tout').innerHTML = `<span class="err">${r[1].some(a => nrm(a).split(' ')[0] === cmd) ? 'Right command, but the options or arguments are off.' : r[1].some(a => nrm(a).split(' ')[0].toLowerCase() === cmd.toLowerCase()) ? `${esc(cmd)}: command not found (check the capitals)` : `${esc(cmd)}: not the command you need here`}</span>`;
+          $('#tout').innerHTML = `<span class="err">${r[1].some(a => nrm(a).split(' ')[0] === cmd) ? 'Right command, but the options or arguments are off.' : r[1].some(a => nrm(a).split(' ')[0].toLowerCase() === cmd.toLowerCase()) ? `${esc(cmd)}: command not found (check the capitals)` : `${esc(cmd)}: not the command you need here`}</span>${wrong >= 2 && hints >= 2 ? `<div class="reveal-fb small">Here's the command: <code class="mono">${esc(r[1][0])}</code>. Type it in exactly, capitals and all.</div>` : ''}`;
           inp.select();
         }
       };

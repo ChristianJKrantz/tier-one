@@ -525,3 +525,12 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 .ticket{border:1px solid var(--stroke2);border-left:4px solid #9362c8;border-radius:14px}.tk-q{font-size:clamp(20px,2.4vw,28px);letter-spacing:-.035em}
 @media(max-width:700px){.win{border-radius:0}.home .hero{grid-template-columns:1fr}.home .hero-txt{padding:22px 19px}.home .rankcard{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;text-align:start;align-items:center;padding:12px 16px}.home .rankcard .idbadge{grid-row:span 2;zoom:.70}.home .rankcard>.muted{margin:0!important}.home .rankcard .statrow{width:100%;margin:0}.home .hero-act{gap:6px}.home .hero-act .btn{min-height:44px}}
 }
+
+/* after two misses: the answer, shown so the miss teaches something (you still pick or type it yourself) */
+.reveal-fb { display: flex; gap: 10px; padding: 10px 14px; border-radius: var(--r); margin-top: 8px; background: var(--good-bg); border: 1px dashed var(--good); }
+.reveal-fb p { margin: 0; } .reveal-fb .ic { color: var(--good); }
+.reveal-fb.small { display: block; font-size: 14px; }
+.opt.reveal { border: 2px dashed var(--good); }
+/* the Continue button says what's next in words */
+.nextbtn { text-align: left; } .nextbtn > span { display: flex; flex-direction: column; line-height: 1.2; }
+.nextbtn small { font-size: 12px; font-weight: 600; opacity: .8; }

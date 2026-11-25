@@ -109,6 +109,9 @@ with sync_playwright() as p:
     check(page.locator('[data-act="hint"]').is_disabled(), 'hint button stops after two hints')
     check(not any(a.lower().replace(' ', '') in fb.replace(' ', '') for a in answers if len(a) > 3), 'hints never show the command')
     shot(page, 'run.png')
+    check("Here's the command" not in page.inner_text('#runfb'), 'one miss and two hints don\'t show the command')
+    page.fill('#runin', 'stillwrong'); page.keyboard.press('Enter')
+    check("Here's the command" in page.inner_text('#runfb') and answers[0].lower() in page.inner_text('#runfb').lower(), 'two misses after every hint show the command to type')
     page.fill('#runin', answers[0].upper())
     page.keyboard.press('Enter')
     check('That opens it' in page.inner_text('#runfb'), 'correct command (any case) is accepted')
@@ -129,7 +132,13 @@ with sync_playwright() as p:
     check('Reread' in page.inner_text('#tkfb'), 'wrong pick links back to the lesson')
     page.click('[data-act="thint"]')
     shot(page, 'ticket.png')
+    check("Here's the answer" not in page.inner_text('#tkfb'), 'one wrong pick doesn\'t reveal the answer')
+    second = [opts.nth(i) for i in range(opts.count()) if int(opts.nth(i).get_attribute('data-o')) != right and not opts.nth(i).is_disabled()][0]
+    second.click()
+    check(page.locator('.opt.reveal').count() == 1 and "Here's the answer" in page.inner_text('#tkfb'), 'a second wrong pick shows the right one')
+    check(page.locator('.opt.right').count() == 0 and not page.locator(f'.opt[data-o="{right}"]').is_disabled(), 'you still pick it yourself')
     page.locator(f'.opt[data-o="{right}"]').click()
+    check(page.evaluate("Object.keys(JSON.parse(localStorage.getItem('tierone.v1')).missed).some(k => k.startsWith('c12:'))"), 'a revealed ticket stays reopened for a rematch')
     check(page.locator('.opt.right').count() == 1, 'finding the right option marks it solved')
 
     # Certification exam: answer everything correctly
