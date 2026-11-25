@@ -107,6 +107,7 @@
     tray.innerHTML = `${tierChip(r.idx)}<span class="tray-txt"><b>${esc(r.name)}</b><small>${S.xp.toLocaleString()} XP</small></span><span class="tray-streak" title="Day streak">${icon('flame')}${st}</span>`;
     const due = allDue(), b = $('#duebadge');
     b.hidden = !due; b.textContent = due > 99 ? '99+' : due;
+    const sb = $('#streakbadge'); if (sb) { sb.hidden = !st; sb.innerHTML = `${icon('flame')}${st}`; sb.title = `${st}-day streak`; } // shown on phones, where the tray is hidden
   }
   let toastT;
   function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }

@@ -534,3 +534,26 @@ kbd { font-size: .72em; border: 1px solid var(--stroke2); border-bottom-width: 2
 /* the Continue button says what's next in words */
 .nextbtn { text-align: left; } .nextbtn > span { display: flex; flex-direction: column; line-height: 1.2; }
 .nextbtn small { font-size: 12px; font-weight: 600; opacity: .8; }
+
+/* ---------- taskbar: room for the iPhone home indicator, and an even bar on phones ---------- */
+.taskbar { height: calc(48px + env(safe-area-inset-bottom)); }
+.desk { bottom: calc(48px + env(safe-area-inset-bottom)); }
+.sbadge { display: none; }
+@media (max-width: 760px) {
+  .taskbar { height: calc(58px + env(safe-area-inset-bottom)); padding: 0 6px env(safe-area-inset-bottom); justify-content: stretch; }
+  .desk { bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .tb-center { flex: 1; gap: 2px; justify-content: space-between; }
+  .tk { flex: 1 1 0; min-width: 0; max-width: 72px; height: 50px; border-radius: 10px; }
+  .tk .ic { width: 24px; height: 24px; }
+  .tk.on::after, .tk[aria-current]::after { bottom: 3px; }
+  .tray { display: none; }
+  .sbadge:not([hidden]) { display: inline-flex; position: absolute; top: 2px; right: calc(50% - 26px); align-items: center; gap: 1px; padding: 0 4px; height: 16px; border-radius: 8px; background: var(--task); font-size: 10px; font-weight: 700; color: var(--text); }
+  .sbadge .ic { width: 11px; height: 11px; color: #e8590c; }
+}
+.start { bottom: calc(56px + env(safe-area-inset-bottom)); max-height: calc(100dvh - 72px - env(safe-area-inset-bottom)); }
+@media (max-width: 760px) { .start { bottom: calc(64px + env(safe-area-inset-bottom)); } }
+@media (max-width: 760px) {
+  .taskbar .tk, .taskbar #startbtn { width: auto; padding: 0; margin: 0; }
+  .toast { bottom: calc(70px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 760px) { .prog td a, .prog th a { display: inline-block; padding: 8px 0; } }
