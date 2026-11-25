@@ -221,7 +221,7 @@
       <section class="how" aria-label="How each chapter works">
         <div>${icon('learn')}<b>Learn</b><small>Short lessons with a think-first question and a "lock it in" summary to self-test</small></div>
         <div>${icon('cards')}<b>Remember</b><small>Flashcards return just before you'd forget them</small></div>
-        <div>${icon('run')}<b>Drill</b><small>Type real commands into a Run box, with hints only</small></div>
+        <div>${icon('run')}<b>Drill</b><small>Type real commands into a Run box, with hints first</small></div>
         <div>${icon('ticket')}<b>Solve</b><small>Help desk tickets explain why a wrong choice misses</small></div>
         <div>${icon('cert')}<b>Get certified</b><small>Score 80% on the certification exam to move up the ladder</small></div>
       </section>

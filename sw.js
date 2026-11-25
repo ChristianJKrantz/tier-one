@@ -2,7 +2,7 @@
    Pages and scripts are network-first (so updates show up right away) with the cache as a fallback;
    icons are cache-first. Only this site's own files are handled. */
 const CACHE_PREFIX = 'tier-one-v';
-const CACHE = CACHE_PREFIX + '16';
+const CACHE = CACHE_PREFIX + '17';
 const CORE = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/content-1.js', 'js/content-2.js', 'js/content-3.js', 'js/course.js', 'js/icons.js', 'js/app.js',
   'manifest.webmanifest?v=2', 'icon.svg?v=2', 'icon-192.png?v=2', 'icon-512.png?v=2', 'icon-maskable-512.png?v=2', 'apple-touch-icon.png?v=2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
